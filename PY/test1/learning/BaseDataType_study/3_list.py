@@ -1,5 +1,5 @@
 l = [3,4,5,6,7,'er',8]
-l2=[[3,4,5,6,7],[8,9,10,34,5]]
+l2=[[3,4,5,6,7],[8,9,10,34,5],[]]
 subl2=[]
 for i in l2:
     subl2.append(i[1:])
@@ -15,3 +15,6 @@ l.append('ss')
 print(id(l))
 l.append('cc')
 print(id(l))
+
+print(min(l2[2]))
+
