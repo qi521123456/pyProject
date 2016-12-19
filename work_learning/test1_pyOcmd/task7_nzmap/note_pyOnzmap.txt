@@ -1,0 +1,9 @@
+
+
+三个模块可操作cmd：os  subprocess  commands
+
+http://www.oschina.net/question/2375184_240864
+> os.system('dir')
+res=os.popen('dir').read()
+
+https://docs.python.org/3.4/library/subprocess.html
