@@ -2,12 +2,12 @@ from kafka import KafkaProducer
 from kafka.errors import KafkaError
 from logging import log
 import msgpack, json
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
+producer = KafkaProducer(bootstrap_servers=['10.0.1.188:9092'])
 
 # Asynchronous by default
 
-for _ in range(10):
-    producer.send('test', b'raw_bytes---')
+#for _ in range(10):
+producer.send('test', b'+www++')
 
 # # Block for 'synchronous' sends
 # try:
