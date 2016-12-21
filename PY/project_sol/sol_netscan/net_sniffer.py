@@ -22,6 +22,8 @@ class TaskMgt:
                 break
         if task_index != -1:
             self.task_list.pop(task_index)
+            g_logger.info("Task '%s' was removed" % task_id)
+        g_logger.warn("There is no task:'%s'" % task_id)
 
     def get_tasks(self):
         tasks = [task.task_id for task in self.task_list]
@@ -31,7 +33,7 @@ class TaskMgt:
         for task in self.task_list:
             if task.task_id == task_id:
                 return task.task_status.value
-        g_logger.warn("Task given task_id not in task_list")
+        g_logger.warn("Task given task_id:'%s' not in task_list" % task_id)
         return None
 
     def set_task_status(self, task_id, task_status):
@@ -42,9 +44,10 @@ class TaskMgt:
             break
     def kill_running_task(self):
         for task in self.task_list:
-            if task.task_process is not None:
+            if task.task_process is not None:  # 也可应status，或者传入id
                  os.killpg(task.task_process.pid, signal.SIGUSR1)  # -15 可以kill python3 ... 以及 zmap ...
-                 print("i kill it")
+                 g_logger.info("Task id : '%s' was killed" % task.task_id)
+        g_logger.warn("There is no running task")
 
 
 class Consumer:  # 任务队列取任务,执行任务
@@ -65,6 +68,8 @@ class Consumer:  # 任务队列取任务,执行任务
                 print('error first makedirs')
         while not tm.task_queue.empty():
             task = tm.task_queue.get()
+            if not task in tm.task_list:  # 若已在remove则不能执行
+                break
             task_id = task.task_id
             ip_src = task.task_ips
             filename = Env.task_dir + str(task_id) + '/'

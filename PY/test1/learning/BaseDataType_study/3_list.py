@@ -15,6 +15,7 @@ l.append('ss')
 print(id(l))
 l.append('cc')
 print(id(l))
-
-print(min(l2[2]))
+l.pop(5)
+#print(min(l2[2]),l)
+print(not 'er' in l)
 

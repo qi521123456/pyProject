@@ -1,24 +1,32 @@
-import logging
+import logging, os
 from enum import Enum
 
 class Logging:
 
     def __init__(self):
+        path = Env.log_name
         self.logger = logging.getLogger()
-        self.handler = logging.StreamHandler()
+        self.shandler = logging.StreamHandler()
+        if not os.path.exists(path):
+            file_dir = path[:path.rfind('/')]
+            os.makedirs(file_dir)
+        self.fhandler = logging.FileHandler(path)
         self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     def get_logger(self):
         self.logger.setLevel(logging.INFO)
-        self.handler.setFormatter(self.formatter)
-        self.logger.addHandler(self.handler)
+        self.shandler.setFormatter(self.formatter)
+        self.fhandler.setFormatter(self.formatter)
+        self.logger.addHandler(self.shandler)
+        self.logger.addHandler(self.fhandler)
         return self.logger
 
 class Env:
     task_dir = '/home/qiqi/scantest/'  # 末尾一定要有 '/'
+    log_name = '/home/qiqi/mylog/log.log'
     # script_home = "/home/Script/"
 class Task:
-    def __init__(self,task_id, task_strategy, port, ip_src, script_data=None, scan_pro='-sS  '):
+    def __init__(self,task_id, task_strategy, port, ip_src, script_data=None, scan_pro='-sS'):
         self.task_id = task_id
         self.task_strategy = task_strategy
         self.port = port
