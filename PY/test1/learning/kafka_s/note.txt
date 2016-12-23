@@ -1,0 +1,5 @@
+查看kafka topic
+./kafka-topics.sh --zookeeper localhost:2181 --list
+
+运行kafka，这之前先运行zookeeper ： zkserver
+.\bin\windows\kafka-server-start.bat .\config\server.properties

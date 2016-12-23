@@ -8,3 +8,16 @@ def craps(n, s):
 
 
 
+
+def reOrderArray(array):
+    l = []
+    r = []
+    for i in range(len(array)):
+        if array[i] % 2 == 1:
+            l.append(array[i])
+        else:
+            r.append(array[i])
+    l.extend(r)
+    return l
+
+print(reOrderArray([1,2,3,4,5,6,7]))

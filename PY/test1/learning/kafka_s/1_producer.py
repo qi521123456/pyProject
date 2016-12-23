@@ -2,12 +2,12 @@ from kafka import KafkaProducer
 from kafka.errors import KafkaError
 from logging import log
 import msgpack, json
-producer = KafkaProducer(bootstrap_servers=['10.0.1.188:9092'])
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
 
 # Asynchronous by default
 
 #for _ in range(10):
-producer.send('test', b'+www++')
+producer.send('test', b'{"task_id":19999,4:5}')
 
 # # Block for 'synchronous' sends
 # try:
@@ -26,7 +26,7 @@ producer.send('test', b'+www++')
 # producer.send('test', key=b'foo', value=b'bar')
 #
 # # encode objects via msgpack
-# producer = KafkaProducer(value_serializer=msgpack.dumps)
+# producer = KafkaProducer(value_serialize r=msgpack.dumps)
 # producer.send('test', {'key': 'value'})
 #
 # # produce json messages
@@ -37,8 +37,8 @@ producer.send('test', b'+www++')
 # for _ in range(100):
 #     producer.send('test', b'msg')
 #
-# # block until all async messages are sent
-# producer.flush()
+# block until all async messages are sent
+producer.flush()
 
 # configure multiple retries
 # producer = KafkaProducer(retries=5)
