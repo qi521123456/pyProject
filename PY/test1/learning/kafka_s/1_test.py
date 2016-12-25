@@ -1,6 +1,9 @@
-from kafka import KafkaClient, SimpleProducer, SimpleConsumer
-kafka = KafkaClient("localhost:9092")
+from kafka import KafkaProducer
 
-producer = SimpleProducer(kafka)
+# class tostr():
+#     def __init__(self, task_id, task_strategy, port, ip_src, script_data=None, scan_pro='-sS'):
 
-print(producer.send_messages("test1","Hello world!"))
+d = {'task_id': 1223, 'task_strategy': True, 'port': 80, 'ip_src': [], 'script_data': None, 'scan_pro': '-sS'}
+print(type(eval(str(d))))
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
+producer.send('test', str(d).encode("utf-8"))

@@ -11,11 +11,11 @@ l3 = {1,2,3,4,5,6,7,8}
 for i in l3:
     pass
     #print(i)
-l.append('ss')
-print(id(l))
+l.extend(['ss',9])
+print(l)
 l.append('cc')
 print(id(l))
-l.pop(5)
+print(l.pop(5))
 #print(min(l2[2]),l)
 print(not 'er' in l)
 
