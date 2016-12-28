@@ -1,5 +1,8 @@
 import logging, os
 from enum import Enum
+import psutil
+import time
+import socket
 
 class Logging:
 
@@ -35,6 +38,47 @@ class Task:
         self.scan_pro = scan_pro  # TCP or UDP
         self.task_status = TaskStatus.INIT
         self.task_process = None
+class TaskResult:
+    def __init__(self,taskID,taskStatus,taskResult):
+        self.task_id = str(taskID)
+        self.task_status = str(taskStatus)
+        self.task_result = str(taskResult)
+        self.nodeIP =self.get_ip()
+    def get_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('1.255.255.255', 0))
+            ip = s.getsockname()[0]
+        except:
+            ip = '127.0.0.1'
+        finally:
+            s.close()
+        return ip
+    def __str__(self):
+        return "{'taskID':"+self.task_id+",'taskStatus':"+self.task_status+"," \
+                    "'taskResult':"+self.task_result+",'scanNode':"+self.nodeIP+"}"
+
+class NodeStatus:
+    def __init__(self):
+        time.sleep(0.5)
+        self.nodeIP = self.get_ip()
+        self.nodeDetail = {
+            'cpu': str(psutil.cpu_percent())+'%',
+            'tStorage': str(psutil.disk_usage("/").total/(1024*1024)) + 'M',
+            'uStorage': str(psutil.disk_usage("/").used/(1024*1024)) + 'M'
+        }
+    def get_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('1.255.255.255', 0))
+            ip = s.getsockname()[0]
+        except:
+            ip = '127.0.0.1'
+        finally:
+            s.close()
+        return ip
+    def __str__(self):
+        return "{'nodeIP':"+self.nodeIP+",'nodeDetail':"+str(self.nodeDetail)+"}"
 class TaskStatus(Enum):
     INIT = "init"
     RUNNING = "running"
