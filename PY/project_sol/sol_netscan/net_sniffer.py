@@ -1,6 +1,6 @@
 from sol_netscan.__init__ import *
 import threading
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer,KafkaProducer
 
 g_logger = Logging().get_logger()
 
@@ -52,12 +52,6 @@ class TaskMgt:
 
 
 class Consumer:  # 任务队列取任务,执行任务
-    # 1.从任务队列取任务
-    # 2.task-->取出任务id，ip_src,script_data
-    # 3.创建等于任务id的文件夹
-    # 4在创建的文件夹下面把测试的ip和脚本的数据写入到该文件下，生成对应的数据文件
-    # 5.调用scan.py执行任务，=》进程实例（1.先阻塞住在这里 2.经这个实例与task对象的progress属性关联，注意吧task_list对应的task相关联）
-    # 开始执行改变status 执行完了改成结束状态   {删除文件夹，节点上不存数据}
     @staticmethod
     def consume_task():
         tm = TaskMgt()
@@ -70,7 +64,7 @@ class Consumer:  # 任务队列取任务,执行任务
         while not tm.task_queue.empty():
             task = tm.task_queue.get()
             if not task in tm.task_list:  # 若已在remove则不能执行
-                break
+                continue
             task_id = task.task_id
             ip_src = task.task_ips
             filename = Env.task_dir + str(task_id) + '/'
@@ -97,20 +91,42 @@ class Consumer:  # 任务队列取任务,执行任务
             task.task_process = child
             task.task_status = TaskStatus.RUNNING
             task.task_process.communicate()
+            task.task_status = TaskStatus.DONE
+            task.task_process = None
+
+            # if os.path.exists(filename+task_id+'.xml'):
+            try:
+                with open(filename+task_id+'.xml','r+') as xf:
+                        result =xf.read()
+                        xf.close()
+            except IOError:
+                with open(filename + task_id + '.txt', 'r+') as tf:
+                    result = tf.read()
+                    tf.close()
+            try:
+                sender = KafkaProducer(bootstrap_servers=['localhost:9092'])
+                sender.send('topic-rersult', str(TaskResult(task_id,task.task_status,result)).encode('utf-8'))
+            except OverflowError:
+                print("send result with some error")
+
             try:
                 shutil.rmtree(filename)
             except OSError:
                 print("can't delete dirs: %s" % filename)
-            task.task_status = TaskStatus.DONE
-            task.task_process = None
     @staticmethod
     def recvTask():
-        consumer = KafkaConsumer('test', bootstrap_servers=['localhost:9092'])
+        consumer = KafkaConsumer('recv-topic', bootstrap_servers=['localhost:9092'])
         for message in consumer:
             print(message.value)
+    @staticmethod
+    def sendStatus():
+        producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
+        while True:
+            time.sleep(10)
+            producer.send('topic-sendStatus', str(NodeStatus()).encode('utf-8'))
 
 
-class Monitor: #发布事件,接收事件
+class Monitor:  # 发布事件,接收事件
     thread = threading.Thread(target=Consumer.consume_task)
     thread.start()
 
