@@ -11,4 +11,4 @@
 # print(id(d))
 
 d = {'id':1,'sex':True,'name':'heoo'}
-print(d.keys())
+print(list(d.keys()))

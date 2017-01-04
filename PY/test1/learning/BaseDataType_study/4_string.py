@@ -16,3 +16,5 @@ sl = b"{'a':1,3:4,'r':5}"
 print(eval(sl),type(sl),eval(str(sl)),s.encode("utf-8"))
 
 print(eval('1+1'))
+
+print("we,re,a".split(","))
