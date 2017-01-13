@@ -10,4 +10,4 @@ math模块的floor(),取小于等于的整数,如floor(3.5)返回3.0,floor(-1.5)
 print(int(3.4))
 
 
-print(3**0)
+print(3**0,2&2)
