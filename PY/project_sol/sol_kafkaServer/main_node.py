@@ -57,6 +57,9 @@ for message in consumer:
             if msg['msg_type'] == 'node_status':
                 ip = msg['nodeIP']
                 nodeDetail = msg['nodeDetail']
+                if ip not in nodeIps:
+                    # TODO 数据库节点状态改为 正常运行
+                    pass
                 nodeIps[ip] = 0  # 此节点有反馈则刷新
                 # TODO 节点细节操作
             else:
