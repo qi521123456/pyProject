@@ -24,7 +24,7 @@ try:
         cursor.execute(sql)
         # result = cursor.fetchone()
         #
-        # print(cursor.fetchall())
+        print(cursor.fetchall())
         # print(result)
         print(cursor.description)
         for row in cursor:

@@ -2214,45 +2214,45 @@ def result_to_mysql_IEC104():  # add by lhb
 
 
 def result_to_mysql_HTTP():  # add by lhb
-	mongo_connect = get_connect('127.0.0.1')
-	mysql_connect1 = get_mysql_connect(ip='10.0.1.188', db='sol')
-	mysql_connect2 = get_mysql_connect(ip='10.0.1.188', db='bdap')
-	res = NetScan.total_results('D:\Res\Res', protocol='HTTP')
-	res = NetScan.filter_results(res, conn=mongo_connect, protocol='HTTP', timestamp='2017-01-18')
-	num = 0
-	for item in res:
-		# try:
-		# 	with open(r'D:\主动探测\mongo_to_mysql\http.json', mode='a') as f1:
-		# 		del item['_id']
-		# 		item['timestamp'] = str(item['timestamp'])
-		# 		f1.write(json.dumps(item['result'], ensure_ascii=False) + '\n')
-		# except Exception as e:
-		# 	continue
+    mongo_connect = get_connect('127.0.0.1')
+    mysql_connect1 = get_mysql_connect(ip='10.0.1.188', db='sol')
+    mysql_connect2 = get_mysql_connect(ip='10.0.1.188', db='bdap')
+    res = NetScan.total_results('D:\Res\Res', protocol='HTTP')
+    res = NetScan.filter_results(res, conn=mongo_connect, protocol='HTTP', timestamp='2017-01-18')
+    num = 0
+    for item in res:
+        # try:
+        # 	with open(r'D:\主动探测\mongo_to_mysql\http.json', mode='a') as f1:
+        # 		del item['_id']
+        # 		item['timestamp'] = str(item['timestamp'])
+        # 		f1.write(json.dumps(item['result'], ensure_ascii=False) + '\n')
+        # except Exception as e:
+        # 	continue
 
-		geo = item.get('geo')
-		longitude = geo[0]
-		latitude = geo[1]
-		device_ip = item.get('ip')
-		target_ip = socket.ntohl(struct.unpack("I", socket.inet_aton(device_ip))[0])
-		location_sql = "SELECT `country`,`province`,`city` FROM `ip_ipipnet` WHERE %s BETWEEN `ip_from` AND `ip_to`" % target_ip
-		location_res = mysql_connect2.query(location_sql)
-		device_country = location_res[0]['country']
-		device_province = location_res[0]['province']
-		device_city = location_res[0]['city']
-		# protocol = item.get('protocol')
-		result = item.get('result')
-		device = result.get('device')
+        geo = item.get('geo')
+        longitude = geo[0]
+        latitude = geo[1]
+        device_ip = item.get('ip')
+        target_ip = socket.ntohl(struct.unpack("I", socket.inet_aton(device_ip))[0])
+        location_sql = "SELECT `country`,`province`,`city` FROM `ip_ipipnet` WHERE %s BETWEEN `ip_from` AND `ip_to`" % target_ip
+        location_res = mysql_connect2.query(location_sql)
+        device_country = location_res[0]['country']
+        device_province = location_res[0]['province']
+        device_city = location_res[0]['city']
+        # protocol = item.get('protocol')
+        result = item.get('result')
+        device = result.get('device')
 
-		create_time = item.get('timestamp')
-		task_id = get_taskid_by_createtime(create_time)
+        create_time = item.get('timestamp')
+        task_id = get_taskid_by_createtime(create_time)
 
-		insert_sql = "INSERT INTO `result_http`" \
-		             "(`task_id`, `create_time`, `device_ip`, `device_country`, `device_province`, `device_city`, `device`, `longitude`, `latitude`)" \
-		             " VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" \
-		             % (task_id, create_time, device_ip, device_country, device_province, device_city, device, longitude, latitude)
-		mysql_connect1.insert(insert_sql)
-		num += 1
-		print(num)
+        insert_sql = "INSERT INTO `result_http`" \
+                     "(`task_id`, `create_time`, `device_ip`, `device_country`, `device_province`, `device_city`, `device`, `longitude`, `latitude`)" \
+                     " VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" \
+                     % (task_id, create_time, device_ip, device_country, device_province, device_city, device, longitude, latitude)
+        mysql_connect1.insert(insert_sql)
+        num += 1
+        print(num)
 
 
 def result_to_mysql_SNMP():  # add by lhb
