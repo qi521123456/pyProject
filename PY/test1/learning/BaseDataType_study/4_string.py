@@ -18,3 +18,8 @@ print(eval(sl),type(sl),eval(str(sl)),s.encode("utf-8"))
 print(eval('1+1'))
 
 print("we,re,a".split(","))
+
+ss = 'wsad'
+sq = list(ss)
+sq.sort()
+print(sq)
