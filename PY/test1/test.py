@@ -49,3 +49,6 @@ print(str1.rfind('/'),str1[:str1.rfind('/')],str1[7:])
 #print(['Google', 'Runoob', 'Taobao', 'Baidu'][::-1])
 # for i in [2, 3, 4].reverse():
 #     print(i)
+import sys,os
+print(r'D:\WorkFile\PY\test1' in sys.path,sys.path)
+print(sys.path[0][:sys.path[0].rfind('\\')],os.getcwd())

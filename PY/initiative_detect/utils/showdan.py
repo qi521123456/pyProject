@@ -1,9 +1,10 @@
+
 try:
     #from utils.logging import Logging
     import requests
     import json
 except Exception as e:
-    print(e)
+    print(e,'++')
 
 
 class Shodan:
@@ -26,7 +27,7 @@ class Shodan:
             for matche in matches:
                 query_res.append(matche.get('ip_str'))
         except Exception as e:
-            print(e)
+            print(e,'-')
         finally:
             return query_res
 

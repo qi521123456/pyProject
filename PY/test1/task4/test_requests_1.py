@@ -21,4 +21,4 @@ with open(filename, 'wb') as fd:
 '''
 #form = {'username':'admin','password':'12345'}
 r = requests.get('https://segmentfault.com/user/login')
-print(r)
+print(r.content)
