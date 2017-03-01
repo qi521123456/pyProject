@@ -1,0 +1,25 @@
+import pdfminer
+from urllib.request import urlopen
+from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+import io
+
+def readPDF(pdfFile):
+    rsrcmgr = PDFResourceManager()
+    retstr = io.StringIO()
+    laparams = LAParams()
+    device = TextConverter(rsrcmgr, retstr, laparams=laparams)
+
+    process_pdf(rsrcmgr, device, pdfFile)
+    device.close()
+
+    content = retstr.getvalue()
+    retstr.close()
+    return content
+# "http://pythonscraping.com/pages/warandpeace/chapter1.pdf"
+pdfFile = urlopen('http://papers.nips.cc/paper/4824-imagenet-classification-withdeep-convolutional-neural-networks.pdf')
+ #pdfFile = open('F:/test.docx','r')# 不能用
+outputString = readPDF(pdfFile)
+print(pdfFile)
+pdfFile.close()
