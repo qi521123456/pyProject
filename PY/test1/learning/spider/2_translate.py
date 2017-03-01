@@ -47,17 +47,32 @@ function RL(a, b) {
 def getTk(text):
     return ctx.call("TL", text)
 
-english_text = "i fuck a gril!"
-tk = getTk(english_text)
-header = {
-    'Refer':'http://translate.google.cn/',
-    'User - Agent': 'Mozilla / 5.0(Windows NT 10.0;WOW64) AppleWebKit / 537.36(KHTML, likeGecko) Chrome / 50.0.2661.102Safari / 537.36Name'
+def translate(english_text):
+    tk = getTk(english_text)
+    header = {
+        'Host':'translate.google.cn',
+        'User - Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0',
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept - Language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+        "Accept - Encoding": "gzip, deflate",
+        "Cookie": "NID=98=fomehjNfQZevs2WFPU6S7IAvJSDRpfUyaLHl8YZ4aBk8jmwMDOS2XLq_lUASgDJe8dQHjSp2tK"
+                "JCQrx1GUHmyFiNlmkI3I7bVqnyr-6cG1SM8zMKy27xfaPlxy-eH7CM; _ga=GA1.3.1223342825.1488333678",
+        'Connection': "keep-alive",
+        'Upgrade - Insecure - Requests': "1",
+        'Cache - Control': "max-age=0"
+        #'Refer':'http://translate.google.cn/#en/zh-CN/%s'%english_text
+    }
+    url = "http://translate.google.cn/translate_a/single?client=t&sl=en&tl=" \
+          "zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=" \
+          "ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=1&tk=%s&q=%s"%(tk,english_text)
+    r = requests.get(url,headers=header)
+    content = r.text.split('"')
+    return content[1]
 
-}
-url = "http://translate.google.cn/translate_a/single?client=t&sl=en&tl=" \
-      "zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=" \
-      "ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=1&tk=%s&q=%s"%(tk,english_text)
-r = requests.get(url,headers=header)
-# print(r.text)
-content = r.text.split('"')
-print(content[1])
+with open('D:/test.txt','r') as f:
+
+    t = f.read().replace('!','.').replace('?','.').split('.')
+    for r in t:
+        print(translate(r),'\n')
+    f.close()
+#print(translate(f.read()))
