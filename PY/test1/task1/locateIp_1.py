@@ -23,4 +23,9 @@ def get_location_byIP(_ip):
         location="unkonwn"
     return "该ip位于："+location
 
+if __name__ == "__main__":
+    print(ip2long('125.77.122.232'))
+    print("12.111:34".rfind(':1') == -1)
+    print(''.isdigit())
+
 
