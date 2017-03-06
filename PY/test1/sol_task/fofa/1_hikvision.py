@@ -1,34 +1,44 @@
-import json
+import json,ijson
 import pymysql
 import socket,struct
 import sys,os,shutil
 import xml.etree.cElementTree as ET
 
 def getinfo(path='D:/test_e/header/hikvision.json'):
+    try:
+        with open(path, 'rb') as f:
+            data = json.loads(f.read().decode())['hits']['hits']
+            l = _jsonData(data)
+            f.close()
+    except MemoryError:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = ijson.items(f, 'hits.hits.item')
+            l = _jsonData(data)
+            f.close()
+    return l
+
+def _jsonData(data):
     l = list()
-    with open(path, 'rb') as f:
-        data = json.loads(f.read().decode())['hits']['hits']
-        for row in data:
-            d = dict()
-            ip = row['_source']['ip']
-            port = ''
-            _id = row['_id']
-            createtime = row['_source']['lastchecktime']
-            info = 'None'  # TODO find device info
-            index = _id.rfind(':')
-            if 'port' in row['_source']:
-                port = str(row['_source']['port'])
-            elif index != -1:  # 有个别没port，但id后有端口
-                port = _id[index+1:]
-            if not port.isdigit():
-                port = "80"
-            d['ip'] = ip
-            d['port'] = port
-            d['createtime'] = createtime
-            d['info'] = info
-            l.append(d)
-        f.close()
-        return l
+    for row in data:
+        d = dict()
+        ip = row['_source']['ip']
+        port = ''
+        _id = row['_id']
+        createtime = row['_source']['lastchecktime']
+        info = 'None'  # TODO find device info
+        index = _id.rfind(':')
+        if 'port' in row['_source']:
+            port = str(row['_source']['port'])
+        elif index != -1:  # 有个别没port，但id后有端口
+            port = _id[index + 1:]
+        if not port.isdigit():
+            port = "80"
+        d['ip'] = ip
+        d['port'] = port
+        d['createtime'] = createtime
+        d['info'] = info
+        l.append(d)
+    return l
 
 def _mysql_connect():
     connection = pymysql.connect(host='10.0.1.188',
@@ -51,7 +61,10 @@ def to_db(l,vendor):
                 iplong = str(struct.unpack('!L', packedIP)[0])
                 sql = "SELECT country, province, city FROM ip_ipipnet where ip_from < "+iplong+" and ip_to > "+iplong+""
                 cursor.execute(sql)
-                location = cursor.fetchall()[0]
+                try:
+                    location = cursor.fetchall()[0]
+                except IndexError:
+                    location = {'country': '*', 'city': '*', 'province': '*'}
                 d.update(location)
                 insertsql = 'INSERT INTO fofa (create_time, device_ip, device_port, device_country, device_province,' \
                             'device_city, vendor, device_info) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s")'\
@@ -124,18 +137,23 @@ def scanIps(info,path='D:/_scan/',script='D:/HTTP.nse'):
         # print(cmd)
         os.system(cmd)
     for xmlfile in os.listdir(xmlPath):
-        checkedIps.extend(_check_from_xml(xmlfile))
+        checkedIps.extend(_check_from_xml(xmlPath+xmlfile))
     #shutil.rmtree(path)
     return checkedIps
 ##############################################################################################################
-def uncheck2mysql(jsonPath,vendor):
-    info = getinfo(jsonPath)
-    to_db(info,vendor)
+def uncheck2mysql(jsonPath):
+    for jsonfile in os.listdir(jsonPath):
+        vendor = jsonfile.split('.')[0]
+        if jsonfile.split('.')[1] != 'json':
+            continue
+        print(jsonfile)
+        info = getinfo(jsonPath+jsonfile)
+        to_db(info, vendor)
 def addCheck(jsonPath):
     info = getinfo(jsonPath)
     checkIps = scanIps(info)
     alter_check(checkIps)
 if __name__ == "__main__":
-    # uncheck2mysql("D:/test_e/xlkh/uc-httpd.json",'XM')
-    print(getinfo("D:/test_e/header/D-Link.json"))
+    uncheck2mysql("D:/test_e/title/")
+
 

@@ -5,7 +5,7 @@ def ip2long(ip):
     return struct.unpack("!L",packedIP)[0]
 def long2ip(longNum):
     return socket.inet_ntoa(struct.pack('!L',longNum))
-print(str(ip2long("61.129.51.27"))+"\n"+str(long2ip(2130706433)))
+print(str(ip2long("87.241.191.255"))+"\n"+str(long2ip(2130706433)))
 
 def ch1(num):
     s = []
@@ -15,4 +15,4 @@ def ch1(num):
         print(i)
     print(s)
     return '-'.join(s[::-1])
-print(ch1(123456789))
+#print(ch1(123456789))
