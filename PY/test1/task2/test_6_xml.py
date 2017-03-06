@@ -1,6 +1,6 @@
 #coding:utf-8
 import xml.etree.cElementTree as ET
-tree=ET.parse('D:/test.xml')
+tree=ET.parse('D:/test_e/10.21/test.xml')
 root=tree.getroot()
 tag=root.tag
 print(root,tag)

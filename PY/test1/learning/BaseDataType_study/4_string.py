@@ -22,4 +22,4 @@ print("we,re,a".split(","))
 ss = 'wsad'
 sq = list(ss)
 sq.sort()
-print(sq)
+print(sq,None != "wsad")

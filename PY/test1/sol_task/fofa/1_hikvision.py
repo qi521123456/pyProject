@@ -1,7 +1,8 @@
 import json
 import pymysql
 import socket,struct
-import sys
+import sys,os,shutil
+import xml.etree.cElementTree as ET
 
 def getinfo(path='D:/test_e/header/hikvision.json'):
     l = list()
@@ -29,7 +30,7 @@ def getinfo(path='D:/test_e/header/hikvision.json'):
         f.close()
         return l
 
-def mysql_connect():
+def _mysql_connect():
     connection = pymysql.connect(host='10.0.1.188',
                                  port=3306,
                                  user='root',
@@ -41,7 +42,7 @@ def mysql_connect():
 
 def to_db(l,vendor):
     res = list()
-    con = mysql_connect()
+    con = _mysql_connect()
     try:
         with con.cursor() as cursor:
             for d in l:
@@ -67,12 +68,74 @@ def to_db(l,vendor):
         con.close()
     return res
 
+def _check_from_xml(path='D:/res.xml'):
+    checkedip = list()
+    tree = ET.parse(path)
+    for child in tree.getroot().findall('host'):
+        ip = child.find('address').attrib['addr']
+        e = None
+        try:
+            e = child.find('ports').find('port').find('script').find('elem').text
+        except AttributeError:
+            pass
+        if not e is None:
+            checkedip.append(ip)
+    return checkedip
 
+def alter_check(ips):
+    con = _mysql_connect()
+    try:
+        with con.cursor() as cursor:
+            for ip in ips:
+                update_sql = "UPDATE fofa SET checked = 1 WHERE device_ip = '"+ip+"'"
+                cursor.execute(update_sql)
+                con.commit()
+            cursor.close()
+    finally:
+        con.close()
 
+def _getPortIps_fromInfo(info):
+    ips = dict()
+    for data in info:
+        port = data['port']
+        ip = data['ip']
+        if not port in ips:
+            ips[port] = [ip]
+        else:
+            ips[port].append(ip)
+    return ips
+def scanIps(info,path='D:/_scan/',script='D:/HTTP.nse'):
+    checkedIps = list()
+    xmlPath = path+'xml/'
+    if not os.path.isdir(path):
+        os.mkdir(path)
+        os.makedirs(xmlPath)
+    ips = _getPortIps_fromInfo(info)
+    for (port,ip) in ips.items():
+        with open(path+port+'.txt','w') as fw:
+            fw.writelines([line+'\n' for line in ip])
+            fw.close()
+    for ipfile in os.listdir(path):
+        port = ipfile.split('.')[0]
+        if not port.isdigit():
+            continue
+        cmd = "nmap -Pn --script %s -p %s -iL %s -oX %s" % (script,
+        port, path + ipfile, xmlPath + port + '.xml')
+        # print(cmd)
+        os.system(cmd)
+    for xmlfile in os.listdir(xmlPath):
+        checkedIps.extend(_check_from_xml(xmlfile))
+    #shutil.rmtree(path)
+    return checkedIps
+##############################################################################################################
+def uncheck2mysql(jsonPath,vendor):
+    info = getinfo(jsonPath)
+    to_db(info,vendor)
+def addCheck(jsonPath):
+    info = getinfo(jsonPath)
+    checkIps = scanIps(info)
+    alter_check(checkIps)
 if __name__ == "__main__":
-    l = getinfo()
-    # print(l)
-    # l2 = [{'port': '80', 'createtime': '2015-09-29 00:00:00', 'info': '', 'ip': '116.92.35.135'},
-    #       {'port': '80', 'createtime': '2016-12-06 18:05:31', 'info': '', 'ip': '218.0.0.142'}]
-    to_db(l,'Hikvision')
-    #print(newl)
+    # uncheck2mysql("D:/test_e/xlkh/uc-httpd.json",'XM')
+    print(getinfo("D:/test_e/header/D-Link.json"))
+
