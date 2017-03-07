@@ -1,4 +1,3 @@
-# coding:utf-8
 from numpy import *
 import operator
 import matplotlib
@@ -41,10 +40,9 @@ def file2matrix(filename):
 
 def pltshow(datingDataMat,labels):
     fig = plt.figure()
-    ax = fig.add_subplot(111)   # 画一个m行n列的图，x表示第几个图(从左向右，从上到下）
+    ax = fig.add_subplot(111)
     ax.scatter(datingDataMat[:,0], datingDataMat[:,1],
                15.0*array(labels), 15.0*array(labels))
-
     plt.show()
 if __name__ == "__main__":
     r = file2matrix(r"G:\Study\机器学习实战\MLiA_SourceCode\machinelearninginaction\Ch02\datingTestSet2.txt")
