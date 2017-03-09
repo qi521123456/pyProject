@@ -57,6 +57,10 @@ def to_db(l,vendor):
         with con.cursor() as cursor:
             for d in l:
                 ip = d['ip']
+                q_sql = "SELECT device_ip FROM fofa WHERE device_ip = '" + ip + "'"
+                cursor.execute(q_sql)
+                if len(cursor.fetchall()) != 0:
+                    continue
                 packedIP = socket.inet_aton(ip)
                 iplong = str(struct.unpack('!L', packedIP)[0])
                 sql = "SELECT country, province, city FROM ip_ipipnet where ip_from < "+iplong+" and ip_to > "+iplong+""
@@ -154,6 +158,6 @@ def addCheck(jsonPath):
     checkIps = scanIps(info)
     alter_check(checkIps)
 if __name__ == "__main__":
-    uncheck2mysql("D:/test_e/title/")
+    uncheck2mysql("D:/test_e/xlkh/")
 
 
