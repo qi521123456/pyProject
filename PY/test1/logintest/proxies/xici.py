@@ -38,6 +38,7 @@ def proxy_test(proxies):
         try:
             res = requests.get(url, proxies=proxy, timeout=0.5)
             if res.status_code == 200:
+                print(xy)
                 usable_proxies.append(proxy)
         except:
             pass
@@ -46,7 +47,7 @@ def proxy_test(proxies):
 def http_url(proUrl,n):
     # url:http://www.xicidaili.com/nn/1
     usable_proxies = []
-    i = 21
+    i = 6
     while i <= n:
         url = proUrl+str(i)
         proxies = get_ips(url)
@@ -57,5 +58,5 @@ def http_url(proUrl,n):
 if __name__ == "__main__":
     # url = "http://www.xicidaili.com/"
     pro_url = "http://www.xicidaili.com/nn/"
-    print(http_url(pro_url,100))
+    print(http_url(pro_url,50))
 
