@@ -13,5 +13,6 @@ def get_down_node():  # 若5次没有收到节点状态数据则认为该节点d
     return None
 
 # get_down_node()
-for (key, value) in nodeIps.items(): # items
-    print(key,value)
+# for (key, value) in nodeIps.items(): # items
+#     print(key,value)
+print(nodeIps.get('s'))
