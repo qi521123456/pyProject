@@ -78,26 +78,26 @@ def textParse(bigString):  # input is big string, #output is word list
 
 
 def spamTest():
-    docList = [];
-    classList = [];
+    docList = []
+    classList = []
     fullText = []
     for i in range(1, 26):
-        wordList = textParse(open('email/spam/%d.txt' % i).read())
+        wordList = textParse(open('E:/Ch04/email/spam/%d.txt' % i,'rb',encoding='utf-8').read())
         docList.append(wordList)
         fullText.extend(wordList)
         classList.append(1)
-        wordList = textParse(open('email/ham/%d.txt' % i).read())
+        wordList = textParse(open('E:/Ch04/email/ham/%d.txt' % i,'rb',encoding='utf-8').read())
         docList.append(wordList)
         fullText.extend(wordList)
         classList.append(0)
     vocabList = createVocabList(docList)  # create vocabulary
-    trainingSet = range(50);
+    trainingSet = range(50)
     testSet = []  # create test set
     for i in range(10):
         randIndex = int(random.uniform(0, len(trainingSet)))
         testSet.append(trainingSet[randIndex])
         del (trainingSet[randIndex])
-    trainMat = [];
+    trainMat = []
     trainClasses = []
     for docIndex in trainingSet:  # train the classifier (get probs) trainNB0
         trainMat.append(bagOfWords2VecMN(vocabList, docList[docIndex]))
@@ -188,4 +188,4 @@ if __name__ == '__main__':
     # p0v,p1v,pab = trainNB0(trainMat,c)
     # print(vlist)
     # print(p0v,'\n',p1v)
-    testingNB()
+    spamTest()
