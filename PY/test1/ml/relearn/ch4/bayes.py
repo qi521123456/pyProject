@@ -1,4 +1,4 @@
-from Numpy import *
+from numpy import *
 def loadDataSet():
     postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],
                  ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
@@ -34,8 +34,8 @@ def trainNB0(trainMatrix,trainCategory):
         else:
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
-    p1Vect = log(p1Num/p1Denom)          #change to log()
-    p0Vect = log(p0Num/p0Denom)          #change to log()
+    p1Vect = log(p1Num/p1Denom)         #change to log()
+    p0Vect = log(p0Num/p0Denom)         #change to log()
     return p0Vect,p1Vect,pAbusive
 
 
@@ -63,14 +63,12 @@ def testingNB():
     for postinDoc in listOPosts:
         trainMat.append(setOfWords2Vec(myVocabList, postinDoc))
     p0V, p1V, pAb = trainNB0(array(trainMat), array(listClasses))
-    testEntry = ['love', 'my', 'dalmation']
+    testEntry = ['food', 'to', 'dalmation']
     thisDoc = array(setOfWords2Vec(myVocabList, testEntry))
-    print
-    testEntry, 'classified as: ', classifyNB(thisDoc, p0V, p1V, pAb)
+    print(testEntry, 'classified as: ', classifyNB(thisDoc, p0V, p1V, pAb))
     testEntry = ['stupid', 'garbage']
     thisDoc = array(setOfWords2Vec(myVocabList, testEntry))
-    print
-    testEntry, 'classified as: ', classifyNB(thisDoc, p0V, p1V, pAb)
+    print(testEntry, 'classified as: ', classifyNB(thisDoc, p0V, p1V, pAb))
 
 
 def textParse(bigString):  # input is big string, #output is word list
@@ -143,7 +141,7 @@ def localWords(feed1, feed0):
     top30Words = calcMostFreq(vocabList, fullText)  # remove top 30 words
     for pairW in top30Words:
         if pairW[0] in vocabList: vocabList.remove(pairW[0])
-    trainingSet = range(2 * minLen);
+    trainingSet = range(2 * minLen)
     testSet = []  # create test set
     for i in range(20):
         randIndex = int(random.uniform(0, len(trainingSet)))
@@ -175,14 +173,19 @@ def getTopWords(ny, sf):
     sortedSF = sorted(topSF, key=lambda pair: pair[1], reverse=True)
     print("SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**SF**")
     for item in sortedSF:
-        print
-        item[0]
+        print(item[0])
     sortedNY = sorted(topNY, key=lambda pair: pair[1], reverse=True)
     print("NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**NY**")
     for item in sortedNY:
-        print
-        item[0]
+        print(item[0])
 if __name__ == '__main__':
-    o,c = loadDataSet()
-    vlist = createVocabList(o)
-    print(vlist)
+    # o,c = loadDataSet()
+    # vlist = createVocabList(o)
+    # trainMat = []
+    # for p in o:
+    #
+    #     trainMat.append(setOfWords2Vec(vlist,p))
+    # p0v,p1v,pab = trainNB0(trainMat,c)
+    # print(vlist)
+    # print(p0v,'\n',p1v)
+    testingNB()

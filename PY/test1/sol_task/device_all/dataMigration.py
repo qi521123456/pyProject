@@ -30,7 +30,6 @@ class Migration():
         self.now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.tablenames = [name['table_name'] for name in self.tableinfo]
 
-
     def __get_result(self,tables):
         reslist = list()
         for table in tables:
@@ -76,7 +75,7 @@ class Migration():
                         reslist.append(res)
             except:
                 pass
-        print("begin write")
+        print("writing...")
         return reslist
 
     def to_deviceall(self,reslist):
@@ -122,16 +121,22 @@ class Migration():
         finally:
             self.conn.close()
 
-    def begin(self):
-        self.to_deviceall(self.__get_result(self.tablenames))
+    def begin(self,tables):
+        if len(tables) is 0:
+            tables = self.tablenames
+        #self.to_deviceall(self.__get_result(tables))
+        print(tables)
 
 
-def main():
+def main(*table):
+    tables = []
+    for t in table:
+        tables.append(t)
     m = Migration()
-    m.begin()
+    m.begin(tables)
 
 
 
 if __name__ == '__main__':
-    main()
+    main(*sys.argv[1:])
 
