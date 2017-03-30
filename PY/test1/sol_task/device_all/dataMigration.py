@@ -1,7 +1,7 @@
 import pymysql
 import datetime
 import sys
-class Migration():
+class Migration:
     tableinfo = [{'table_name': 'iec104', 'vendor': 'Unknown'},
                  {'table_name': 'melsec_q_tcp', 'vendor': 'Mitsubishi'},
                  {'table_name': 'melsec_q_udp', 'vendor': 'Mitsubishi'},
@@ -138,5 +138,7 @@ def main(*table):
 
 
 if __name__ == '__main__':
-    main(*sys.argv[1:])
+    #main(*sys.argv[1:])
+    m = Migration()
+    print(["result_"+i['table_name'] for i in m.tableinfo])
 
