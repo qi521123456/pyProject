@@ -66,21 +66,11 @@ class DataPersistence:
             for line in fr.readlines():
                 d = json.loads(line)
                 resd = {}
-                sss = None
-                if 'modbus' in d['opts']:
-                    for i in d['opts']['modbus']:
-                        for j in i['response']:
-                            if j[0] == "Device Identification" and j[1].find('Error') == -1 and j[1].strip() != "":
-                                sss = j[1]
-                if sss:
-
-                    print(d['ip_str'],sss)
                 t = d['timestamp']
                 timestamp = t[:t.find('.')].replace('T', ' ')
                 ip = d['ip_str']
                 port = d['port']
                 location = d['location']
-
                 resd['device_ip'] = ip
                 resd['device_port'] = port
                 resd['create_time'] = timestamp
@@ -89,9 +79,20 @@ class DataPersistence:
                 resd['device_country'] = location['country_name']
                 resd['device_province'] = 'None'
                 resd['device_city'] = location['city']
-                res.append(resd)
+                opts = d['opts']
+                if len(opts) == 23:  # ethernetip
+                    resd['vendor'] = opts['vendor_id']
+                    resd['product_name'] = opts['product_name']
+                    resd['product_code'] = opts['product_code']
+                    resd['device_type'] = opts['device_type']
+                    resd['revision'] = str(opts['revision_major'])+'.'+str(opts['revision_minor'])
+                    resd['serial_number'] = opts['serial']
+                    res.append(resd)
+                    print(opts)
         return res
 if __name__ == '__main__':
     dp = DataPersistence()
-    r = dp.get_data("D:/modbus.json")
+    r = dp.get_data("D:/ethernetip.json")
+
     #print(r)
+    #dp.to_result('result_ethernetip',r)
