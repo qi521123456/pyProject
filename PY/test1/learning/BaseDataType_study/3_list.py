@@ -23,6 +23,6 @@ def t1():
 
     print(l+[3,2])
 
-for i in l:
-    print(i)
+for i,j in enumerate(l):
+    print(i,j)
 
