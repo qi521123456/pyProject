@@ -88,18 +88,19 @@ def get_txt(filename):
     return sentences
 
 
-def main(txt):
+def w2f(txt,file):
     segflag = segment_flag
-    for sentence in txt[:-1]:
-        res = translate(sentence)
-        if res == segflag[:-1]:
-            print('\n')
-            continue
-        print(res+'。',end=' ')
+    with open(file,'w',encoding='utf-8') as fw:
+        for sentence in txt[:-1]:
+            res = translate(sentence)
+            if res == segflag[:-1]:
+                fw.write('\n')
+                continue
+            fw.write(res+'。')
 
 
 
 if __name__ == '__main__':
     r = get_txt("D:/test.txt")
     #print(segment_flag[:-1])
-    main(r)
+    w2f(r,"D:/res.txt")
