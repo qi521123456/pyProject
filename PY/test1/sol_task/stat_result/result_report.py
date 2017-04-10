@@ -1,5 +1,6 @@
 # coding:utf-8
 from docx import Document
+from docx.shared import Inches
 from openpyxl import Workbook,load_workbook
 from openpyxl.styles import Font,colors
 import matplotlib.pyplot as plt
@@ -21,7 +22,12 @@ ICDTABLES = [{'table_name': 'result_iec104', 'vendor': '未知', 'device_info':N
              {'table_name': 'result_dnp3', 'vendor': '未知', 'device_info':None}
              ]
 IofTABLES = ['result_http', 'result_dahua']
-def get_data(province,month):  # province为汉字省份，month为二位数月份（01,02....12）
+PROVINCES = ['上海市', '云南', '内蒙古自治区', '北京市', '台湾', '吉林', '四川', '天津市', '宁夏回族自治区', '安徽',
+             '山东', '山西', '广东', '广西壮族自治区', '新疆', '新疆维吾尔自治区', '江苏', '江西', '河北', '河南',
+             '浙江', '海南', '湖北', '湖南', '澳门特别行政区', '甘肃', '福建', '西藏自治区', '贵州', '辽宁', '重庆市',
+             '陕西', '青海', '香港特别行政区', '黑龙江']
+
+def get_data(province,begin_time,end_time):  # province为汉字省份，time为2017-3-4-10
     con = pymysql.connect(host='10.0.1.199',
                           port=3306,
                           user='root',
@@ -29,7 +35,10 @@ def get_data(province,month):  # province为汉字省份，month为二位数月�
                           db='sol_daily',
                           charset='utf8mb4',
                           cursorclass=pymysql.cursors.DictCursor)
-    year = datetime.datetime.now().strftime('%Y')
+    bt = [int(b) for b in begin_time.split('-')]
+    et = [int(e) for e in end_time.split('-')]
+    begin = datetime.datetime(bt[0],bt[1],bt[2],bt[3])
+    end = datetime.datetime(et[0],et[1],et[2],et[3])
     icdTables = ICDTABLES
     iofTables = IofTABLES
     icdData = []
@@ -60,7 +69,8 @@ def get_data(province,month):  # province为汉字省份，month为二位数月�
                 for data in tmp:
                     d = {}
                     # print(str(year) + '-' + str(month),data['create_time'].strftime('%Y-%m'))
-                    if data['create_time'].strftime('%Y-%m') != str(year) + '-' + str(month):
+                    timestamp = data['create_time']
+                    if timestamp < begin or timestamp > end:
                         continue
                     d['ip'] = data['device_ip']
                     d['location'] = province + data['device_city']
@@ -94,7 +104,8 @@ def get_data(province,month):  # province为汉字省份，month为二位数月�
                 for data in tmp:
                     d = {}
                     #print(str(year) + '-' + str(month),data['create_time'].strftime('%Y-%m'))
-                    if data['create_time'].strftime('%Y-%m') != str(year)+'-'+str(month):
+                    timestamp = data['create_time']
+                    if timestamp < begin or timestamp > end:
                         continue
                     d['ip'] = data['device_ip']
                     d['location'] = province+data['device_city']
@@ -119,6 +130,10 @@ def draw_pie(info,province,path):
     location = {}
     vendor = {}
     protocol = {}
+    if len(info) <= 0:
+        print("no data")
+        return
+    flag = 'info' in info[0]
     tmp = {'location':location,'vendor':vendor,'protocol':protocol}
     for i in info:
         for k,v in tmp.items():
@@ -130,11 +145,20 @@ def draw_pie(info,province,path):
         mpl.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体 解决中文显示问题
         plt.figure()
         if name == 'location':
-            title = province+"联网核心工控设备地区分布图"
+            if flag:
+                title = province+"物联网设备地区分布图"
+            else:
+                title = province+"联网核心工控设备地区分布图"
         elif name == 'vendor':
-            title = province+"联网核心工控设备厂商分布图"
+            if flag:
+                title = province + "物联网设备厂商分布图"
+            else:
+                title = province+"联网核心工控设备厂商分布图"
         else:
-            title = province+"联网核心工控设备协议分布图"
+            if flag:
+                title = province + "物联网设备协议分布图"
+            else:
+                title = province+"联网核心工控设备协议分布图"
         plt.title(title)
         labels = []
         sizes = []
@@ -142,33 +166,35 @@ def draw_pie(info,province,path):
             labels.append(k)
             sizes.append(v)
         #colors = ['red', 'yellowgreen', 'lightskyblue']
-        plt.pie(sizes, labels=labels,autopct='%3.1f%%', shadow=False,startangle=90, pctdistance=0.8)
+        plt.pie(sizes, labels=labels,autopct='%3.1f%%', shadow=False,startangle=90, pctdistance=0.5)
         plt.axis('equal')
         plt.legend(loc='upper right')
         # plt.show()
         plt.savefig(path+name+".png")
         plt.close()
-def draw_grid(data,filename):
-    # if os.path.exists(filename):
-    #     wb = load_workbook(filename)
-    # else:
-    #     wb = Workbook(filename)
+def draw_grid(data,province,path):
+    if len(data) <= 0:
+        print("no data")
+        return
     name1 = "所有设备"
     name2 = "有信息设备"
-    wb = Workbook(filename)
-    ws = wb.create_sheet(name1)
-    # ws = wb.active
-    # ws = wb.create_sheet(name1)
-    #ws.title = name1
-    ft = Font(name='Courier New', size=12, color=colors.BLACK, bold=True)
-    # wb.create_sheet(name1)
-    # ws = wb.get_sheet_by_name(name1)
 
-    ws.cell('A1').value = 'IP'
+    wb = Workbook()
+    ws = wb.active
+    #ws = wb.create_sheet(name1)
+    ws.title = name1
+    ft = Font(name='Courier New', size=12, color=colors.BLACK, bold=True)
+    ws['A1'].value = 'IP'
     ws['B1'].value = '协议'
     ws['C1'].value = '端口'
     ws['D1'].value = '位置'
     ws['E1'].value = '厂商'
+    ws.column_dimensions['B'].width = 25
+    ws.column_dimensions['C'].width = 25
+    ws.column_dimensions['D'].width = 25
+    ws.column_dimensions['E'].width = 25
+    #ws.column_dimensions['F'].width = 25
+    ws.column_dimensions['A'].width = 25
     ws['A1'].font = ft
     ws['B1'].font = ft
     ws['C1'].font = ft
@@ -176,11 +202,11 @@ def draw_grid(data,filename):
     ws['E1'].font = ft
     for row,d in enumerate(data):
         #for col in range(0,5):
-        ws.cell(column=0,row=row+1,value=d['ip'])
-        ws.cell(column=1, row=row + 1, value=d['protocol'])
-        ws.cell(column=2, row=row + 1, value=d['port'])
-        ws.cell(column=3, row=row + 1, value=d['location'])
-        ws.cell(column=4, row=row + 1, value=d['vendor'])
+        ws.cell(column=1,row=row+2,value=d['ip'])
+        ws.cell(column=2, row=row + 2, value=d['protocol'])
+        ws.cell(column=3, row=row + 2, value=d['port'])
+        ws.cell(column=4, row=row + 2, value=d['location'])
+        ws.cell(column=5, row=row + 2, value=d['vendor'])
     if 'info' in data[0]:
         infos = []
         for i in data:
@@ -188,6 +214,11 @@ def draw_grid(data,filename):
                 continue
             infos.append(i)
         ws2 = wb.create_sheet(name2)
+        ws2.column_dimensions['B'].width = 25
+        ws2.column_dimensions['C'].width = 25
+        ws2.column_dimensions['D'].width = 25
+        ws2.column_dimensions['E'].width = 25
+        ws2.column_dimensions['A'].width = 25
         ws2['A1'].value = 'IP'
         ws2['B1'].value = '协议'
         ws2['C1'].value = '位置'
@@ -199,17 +230,72 @@ def draw_grid(data,filename):
         ws2['D1'].font = ft
         ws2['E1'].font = ft
         for row, d in enumerate(infos):
-            ws2.cell(column=0, row=row + 1, value=d['ip'])
-            ws2.cell(column=1, row=row + 1, value=d['location'])
-            ws2.cell(column=2, row=row + 1, value=d['vendor'])
-            ws2.cell(column=3, row=row + 1, value=d['protocol'])
-            ws2.cell(column=4, row=row + 1, value=d['info'])
-    wb.save(filename)
+            ws2.cell(column=1, row=row + 2, value=d['ip'])
+            ws2.cell(column=2, row=row + 2, value=d['protocol'])
+            ws2.cell(column=3, row=row + 2, value=d['location'])
+            ws2.cell(column=4, row=row + 2, value=d['vendor'])
+            ws2.cell(column=5, row=row + 2, value=d['info'])
+    wb.save(path+province+'.xlsx')
+
+def create_doc(data,province,filename,begin_time,end_time):
+    b = begin_time.split('-')
+    e = end_time.split('-')
+    path = filename[:filename.rfind('/')+1]
+    count = len(data)
+    if count <= 0:
+        print("no data")
+        return
+    doc = Document()
+    doc.add_heading("一、关键信息基础设施联网状况和安全隐患", 1)
+    doc.add_heading("1.联网关键信息基础设施探测分析", 2)
+    if 'info' in data[0]:
+        doc.add_paragraph("针对%s的联网关键信息基础设施开展主动探测与识别分析，范围覆盖常用的工业协议及端口，例如S7comm、Modbus、BACnet、Fox等。" % province)
+        p = doc.add_paragraph("自%s年%s月%s日%s时开始，截止至%s年%s月%s日%s时，" % (b[0],b[1],b[2],b[3],e[0],e[1],e[2],e[3]))
+        p.add_run("一共探测发现联网关键信息基础设施核心工业设备%s例" % count).bold = True
+        p.add_run("。安徽联网关键信息基础设施资产明细详见附件“%s.xslx”。%s联网关键信息基础设施资产统计分析图如下所示。" % (province,province))
+        doc.add_picture(path+'location.png',width=Inches(4))
+        doc.add_picture(path + 'protocol.png',width=Inches(4))
+        doc.add_picture(path + 'vendor.png',width=Inches(4))
+        doc.add_heading("2.安全漏洞分析", 2)
+        doc.add_paragraph("探测到的部分联网核心设备和监控系统存在漏洞缺陷，具有潜在的安全风险。一旦遭受网络攻击，将造成重大危害和损失，建议对联网的关键信息基础设施及早处置。")
+        doc.add_heading("2.1.联网核心智能设备的漏洞匹配", 3)
+        doc.add_paragraph("目前探测到的安徽地区的核心智能设备主要分为两类，一类是目标主机回复了S7comm等的响应，但不包含具体的设备信息，"
+                          "只能判断为关键信息基础设施核心智能设备；另一类则包含有详细的设备信息，其中设备详单信息见附件“%s.xlsx”。" % province)
+        doc.add_paragraph("通过将设备型号与漏洞库做匹配，能够获知相应联网核心智能设备可能存在的安全漏洞，经过统计，安徽地区存在漏洞的"
+                          "设备集中分布在罗克韦尔设备，对应的设备型号存在的漏洞信息如下表所示。（具体设备IP详见%s.xlsx）。" % province)
+        table = doc.add_table(rows=1, cols=1, style='Table Grid')
+        table.rows[0].cells[0].text = province+"部分联网核心智能设备可能存在的安全漏洞..."
+    else:
+        doc.add_paragraph("针对%s的联网关键信息基础设施开展主动探测与识别分析，范围覆盖常用的物联网协议及端口，例如HTTP协议。" % province)
+        p = doc.add_paragraph("自%s年%s月%s日%s时开始，截止至%s年%s月%s日%s时，" % (b[0], b[1], b[2], b[3], e[0], e[1], e[2], e[3]))
+        p.add_run("一共探测发现联网关键信息基础设施核心工业设备%s例" % count).bold = True
+        p.add_run("主要包括雄迈、海康威视和大华产品供应商。具体资产详情见附件“%s.xslx”。%s联网监控系统统计分布信息如下图所示。" % (province,province))
+        doc.add_picture(path + 'location.png', width=Inches(4))
+        doc.add_picture(path + 'vendor.png', width=Inches(4))
+    doc.save(filename)
+
+def main():
+    province = "北京"
+    begin_time = '2017-3-1-1'
+    end_time = '2017-4-1-1'
+    path = "D:/"+province+'/'
+    if province not in PROVINCES:
+        print("no province ‘%s’" % province)
+        return
+    if os.path.exists(path):
+        __import__('shutil').rmtree(path)
+    os.makedirs(path)
+    icd,iof = get_data(province,begin_time,end_time)
+    doc_type = {"工控":icd, "物联网":iof}
+    for d_t,data in doc_type.items():
+        os.mkdir(path + d_t + "/")
+        draw_pie(data,province,path+d_t + "/")
+        draw_grid(data, province, path + d_t + "/")
+        create_doc(data,province,path+d_t + "/"+province+"联网关键信息基础建设-"+d_t+'.docx',begin_time,end_time)
 
 
 
 if __name__ == '__main__':
-    a,b = get_data('河北','03')
-    print(a,'\n',b)
-    draw_grid(a,"D:/test.xlsx")
-    #draw_pie(b,'HEIBEI','D:/')
+    main()
+
+

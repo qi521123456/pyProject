@@ -23,7 +23,10 @@ def pa188():
 def writedocx(filename):
     recordset = [{'qty':1,'id':111,'desc':"love"}]
     document = Document()
-    document.add_heading('Document Title', 0)
+    head_style = {}
+    t = document.add_heading('一、关键信息基础设施联网状况和安全隐患', 1)
+    t.style = "Heading2"
+    t.add_run("楷体_gb2312").font.name = "仿宋"
     p = document.add_paragraph('A plain paragraph having some ')
     p.add_run('bold').bold = True
     p.add_run(' and some ')
@@ -38,7 +41,7 @@ def writedocx(filename):
         'first item in ordered list', style='ListNumber'
     )
 
-    document.add_picture('D:/1.jpg', width=Inches(1.25))
+   # document.add_picture('D:/location.png', width=Inches(1.25))
 
     table = document.add_table(rows=1, cols=4, style='Table Grid')
     hdr_cells = table.rows[0].cells
@@ -55,6 +58,26 @@ def writedocx(filename):
     #document.add_page_break()
 
     document.save(filename)
+def testdoc(filename):
+    styles = ['Normal', 'Body Text', 'Body Text 2', 'Body Text 3', 'Caption', 'Heading 1',
+              'Heading 2', 'Heading 3', 'Heading 4', 'Heading 5', 'Heading 6', 'Heading 7',
+              'Heading 8', 'Heading 9', 'Intense Quote', 'List', 'List 2', 'List 3', 'List Bullet',
+              'List Bullet 2', 'List Bullet 3', 'List Continue', 'List Continue 2', 'List Continue 3',
+              'List Number', 'List Number 2', 'List Number 3', 'List Paragraph',
+              'No Spacing', 'Quote', 'Subtitle', 'TOCHeading', 'Title']
+    styles2 = ['Body Text Char', 'Body Text 2 Char', 'Body Text 3 Char', 'Book Title',
+               'Default Paragraph Font', 'Emphasis', 'Heading 1 Char', 'Heading 2 Char',
+               'Heading 3 Char', 'Heading 4 Char', 'Heading 5 Char', 'Heading 6 Char',
+               'Heading 7 Char', 'Heading 8 Char', 'Heading 9 Char', 'Intense Emphasis',
+               'Intense Quote Char', 'Intense Reference', 'Macro Text Char', 'Quote Char',
+               'Strong', 'Subtitle Char', 'Subtle Emphasis', 'Subtle Reference', 'Title Char']
+
+    doc = Document()
+    for s in styles:
+        doc.add_paragraph('一、关键信息基础设施联网状况和安全隐患\t'+s, style=s)
+
+    doc.save(filename)
+
 
 def readtable(filename):
     doc = Document(filename)
@@ -63,4 +86,5 @@ def readtable(filename):
         for cell in row.cells:
             print(cell.text)
 if __name__ == '__main__':
-    writedocx("D:/demo.docx")
+    #writedocx("D:/demo.docx")
+    testdoc("D:/test.docx")

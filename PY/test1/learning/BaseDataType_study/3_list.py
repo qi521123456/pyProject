@@ -1,4 +1,5 @@
 l = [3,4,5,6,7,'er',8]
+l2 = [2,2,2,2,2,2,2,2]
 def t1():
     print(l[:-1],l[2:])
     l2=[[3,4,5,6,7],[8,9,10,34,5],[]]
@@ -23,6 +24,11 @@ def t1():
 
     print(l+[3,2])
 
-for i,j in enumerate(l):
-    print(i,j)
+    for i,j in enumerate(l):
+        print(i,j)
 
+    for i in l,l2:
+        print(i[:])
+
+l.append(None)
+print(len(l))

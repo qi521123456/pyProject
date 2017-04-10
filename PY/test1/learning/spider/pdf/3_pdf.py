@@ -18,8 +18,12 @@ def readPDF(pdfFile):
     retstr.close()
     return content
 # "http://pythonscraping.com/pages/warandpeace/chapter1.pdf"
-pdfFile = urlopen('http://papers.nips.cc/paper/4824-imagenet-classification-withdeep-convolutional-neural-networks.pdf')
- #pdfFile = open('F:/test.docx','r')# 不能用
-outputString = readPDF(pdfFile)
-print(pdfFile)
+#pdfFile = urlopen('http://papers.nips.cc/paper/4824-imagenet-classification-withdeep-convolutional-neural-networks.pdf')
+
+fw = open('D:/1.txt','w',encoding='utf-8')
+pdfFile = open('D:/tet.pdf','rb')
+outputString = readPDF(pdfFile).encode('utf-8')
+print(outputString)
+
+fw.write(outputString.decode())
 pdfFile.close()
