@@ -69,10 +69,10 @@ def translate(english_text):
     content = r.text.split('"')
     return content[1]
 
-with open('D:/test.txt','r') as f:
-
-    t = f.read().replace('!','.').replace('?','.').split('.')
-    for r in t:
-        print(translate(r),'\n')
-    f.close()
-#print(translate(f.read()))
+# with open('D:/test.txt','r') as f:
+#
+#     t = f.read().replace('!','.').replace('?','.').split('.')
+#     for r in t:
+#         print(translate(r),'\n')
+#     f.close()
+print(translate("i am a boy"))

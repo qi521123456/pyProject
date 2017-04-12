@@ -101,6 +101,6 @@ def w2f(txt,file):
 
 
 if __name__ == '__main__':
-    r = get_txt("D:/test.txt")
+    r = get_txt("D:/1.txt")
     #print(segment_flag[:-1])
     w2f(r,"D:/res.txt")

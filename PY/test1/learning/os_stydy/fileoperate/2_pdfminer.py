@@ -23,11 +23,15 @@ def with_pdf (pdf_doc, fn, pdf_pwd, *args):
         # create a parser object associated with the file object
         parser = PDFParser(fp)
         # create a PDFDocument object that stores the document structure
-        doc = PDFDocument(parser, pdf_pwd)
+        doc = PDFDocument(parser)
         # connect the parser and document objects
         parser.set_document(doc)
         # supply the password for initialization
 
+        doc.set_parser(parser)
+        # 提供初始化密码
+        # 如果没有密码 就创建一个空的字符串
+        doc.initialize()
         if doc.is_extractable:
             # apply the function and return the result
             result = fn(doc, *args)
@@ -83,19 +87,20 @@ def determine_image_type (stream_first_4_bytes):
     """Find out the image file type based on the magic number comparison of the first 4 (or 2) bytes"""
     file_type = None
     bytes_as_hex = b2a_hex(stream_first_4_bytes)
-    if bytes_as_hex.startswith('ffd8'):
+    if bytes_as_hex.startswith(b'ffd8'):
         file_type = '.jpeg'
-    elif bytes_as_hex == '89504e47':
+    elif bytes_as_hex == b'89504e47':
         file_type = '.png'
-    elif bytes_as_hex == '47494638':
+    elif bytes_as_hex == b'47494638':
         file_type = '.gif'
-    elif bytes_as_hex.startswith('424d'):
+    elif bytes_as_hex.startswith(b'424d'):
         file_type = '.bmp'
     return file_type
 
 def save_image (lt_image, page_number, images_folder):
     """Try to save the image data from this LTImage object, and return the file name, if successful"""
     result = None
+
     if lt_image.stream:
         file_stream = lt_image.stream.get_rawdata()
         if file_stream:
@@ -153,15 +158,18 @@ def parse_lt_objs (lt_objs, page_number, images_folder, text=[]):
         if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
             # text, so arrange is logically based on its column width
             page_text = update_page_text_hash(page_text, lt_obj)
+            print(lt_obj)
         elif isinstance(lt_obj, LTImage):
             # an image, so save it to the designated folder, and note its place in the text
+            print(lt_obj)
             saved_file = save_image(lt_obj, page_number, images_folder)
             if saved_file:
                 # use html style <img /> tag to mark the position of the image within the text
                 text_content.append('<img src="'+os.path.join(images_folder, saved_file)+'" />')
             else:
-                print >> sys.stderr, "error saving image on page", page_number, lt_obj.__repr__
+                print(sys.stderr, "error saving image on page", page_number, lt_obj.__repr__)
         elif isinstance(lt_obj, LTFigure):
+            print("___"*20,lt_obj)
             # LTFigure objects are containers for other LT* objects, so recurse through the children
             text_content.append(parse_lt_objs(lt_obj, page_number, images_folder, text_content))
 
@@ -186,7 +194,7 @@ def _parse_pages (doc, images_folder):
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
     text_content = []
-    for i, page in enumerate(PDFPage.create_pages(doc)):
+    for i, page in enumerate(doc.get_pages()):
         interpreter.process_page(page)
         # receive the LTPage object for this page
         layout = device.get_result()
@@ -195,11 +203,10 @@ def _parse_pages (doc, images_folder):
 
     return text_content
 
-def get_pages (pdf_doc, pdf_pwd='', images_folder='D:/tmp'):
+def get_pages (pdf_doc, pdf_pwd='', images_folder='D:/tmp/'):
     """Process each of the pages in this pdf file and return a list of strings representing the text found in each page"""
     return with_pdf(pdf_doc, _parse_pages, pdf_pwd, *tuple([images_folder]))
 
-a = open('D:/t.txt','w')
-for i in get_pages('D:/t.pdf'):
-    a.write(i)
-a.close()
+a = open('D:/1.txt','w',encoding='utf-8')
+i=get_pages('D:/tet.pdf')
+a.writelines(i)

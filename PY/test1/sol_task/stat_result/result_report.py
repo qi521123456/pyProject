@@ -37,8 +37,8 @@ def get_data(province,begin_time,end_time):  # province为汉字省份，time为
                           cursorclass=pymysql.cursors.DictCursor)
     bt = [int(b) for b in begin_time.split('-')]
     et = [int(e) for e in end_time.split('-')]
-    begin = datetime.datetime(bt[0],bt[1],bt[2],bt[3])
-    end = datetime.datetime(et[0],et[1],et[2],et[3])
+    begin = datetime.datetime(bt[0],bt[1],bt[2])
+    end = datetime.datetime(et[0],et[1],et[2])
     icdTables = ICDTABLES
     iofTables = IofTABLES
     icdData = []
@@ -250,7 +250,7 @@ def create_doc(data,province,filename,begin_time,end_time):
     doc.add_heading("1.联网关键信息基础设施探测分析", 2)
     if 'info' in data[0]:
         doc.add_paragraph("针对%s的联网关键信息基础设施开展主动探测与识别分析，范围覆盖常用的工业协议及端口，例如S7comm、Modbus、BACnet、Fox等。" % province)
-        p = doc.add_paragraph("自%s年%s月%s日%s时开始，截止至%s年%s月%s日%s时，" % (b[0],b[1],b[2],b[3],e[0],e[1],e[2],e[3]))
+        p = doc.add_paragraph("自%s年%s月%s日开始，截止至%s年%s月%s日，" % (b[0],b[1],b[2],e[0],e[1],e[2]))
         p.add_run("一共探测发现联网关键信息基础设施核心工业设备%s例" % count).bold = True
         p.add_run("。安徽联网关键信息基础设施资产明细详见附件“%s.xslx”。%s联网关键信息基础设施资产统计分析图如下所示。" % (province,province))
         doc.add_picture(path+'location.png',width=Inches(4))
@@ -267,18 +267,16 @@ def create_doc(data,province,filename,begin_time,end_time):
         table.rows[0].cells[0].text = province+"部分联网核心智能设备可能存在的安全漏洞..."
     else:
         doc.add_paragraph("针对%s的联网关键信息基础设施开展主动探测与识别分析，范围覆盖常用的物联网协议及端口，例如HTTP协议。" % province)
-        p = doc.add_paragraph("自%s年%s月%s日%s时开始，截止至%s年%s月%s日%s时，" % (b[0], b[1], b[2], b[3], e[0], e[1], e[2], e[3]))
+        p = doc.add_paragraph("自%s年%s月%s日开始，截止至%s年%s月%s日，" % (b[0], b[1], b[2], e[0], e[1], e[2]))
         p.add_run("一共探测发现联网关键信息基础设施核心工业设备%s例" % count).bold = True
         p.add_run("主要包括雄迈、海康威视和大华产品供应商。具体资产详情见附件“%s.xslx”。%s联网监控系统统计分布信息如下图所示。" % (province,province))
         doc.add_picture(path + 'location.png', width=Inches(4))
         doc.add_picture(path + 'vendor.png', width=Inches(4))
     doc.save(filename)
 
-def main():
-    province = "北京"
-    begin_time = '2017-3-1-1'
-    end_time = '2017-4-1-1'
-    path = "D:/"+province+'/'
+def main(path,province = "北京市",begin_time = '2017-03-22'):
+    end_time = datetime.datetime.now().strftime('%Y-%m-%d')
+    path += province+'/'
     if province not in PROVINCES:
         print("no province ‘%s’" % province)
         return
@@ -294,8 +292,7 @@ def main():
         create_doc(data,province,path+d_t + "/"+province+"联网关键信息基础建设-"+d_t+'.docx',begin_time,end_time)
 
 
-
 if __name__ == '__main__':
-    main()
+    main("D:/")
 
 
