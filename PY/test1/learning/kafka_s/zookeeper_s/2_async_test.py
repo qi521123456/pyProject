@@ -1,7 +1,7 @@
 from kazoo.client import KazooClient
 from kazoo.handlers.gevent import SequentialGeventHandler
 
-zk = KazooClient(hosts="121.1.1.1:4442",handler=SequentialGeventHandler())
+zk = KazooClient(hosts="192.168.202.129:2181",handler=SequentialGeventHandler())
 
 # returns immediately
 event = zk.start_async()
