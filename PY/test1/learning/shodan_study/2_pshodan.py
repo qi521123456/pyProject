@@ -21,6 +21,6 @@ def get_ips(params):
     return ips
 
 
-with open('D:/hwRips.txt', 'w') as fw:
-    for data in get_ips("cisco+router+port:161"):
+with open('D:/ips.txt', 'w') as fw:
+    for data in get_ips("port:102"):
         fw.write(data + '\n')

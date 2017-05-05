@@ -1,5 +1,5 @@
 import os
-s = 'whar is jjj'
+s = 'whar-is jjj'
 # print(s.replace(' ','%20'))
 # for i in s:
 #     print(i)
@@ -8,7 +8,7 @@ s = 'whar is jjj'
 # t = '1'
 # print(t != '',s[-1] is '!')
 
-print(s[:s.rfind('s')],len(s))
+print(s[:s.rfind('s')-2],len(s))
 #__import__('shutil').rmtree("D:/北京/")
 print(os.path.exists("D:/北京/"))
 

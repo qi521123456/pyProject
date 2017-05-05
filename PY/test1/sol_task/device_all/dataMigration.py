@@ -20,7 +20,7 @@ class Migration:
                  ]
     def __init__(self):
 
-        self.conn = pymysql.connect(host='10.0.1.188',
+        self.conn = pymysql.connect(host='10.0.1.199',
                                  port=3306,
                                  user='root',
                                  password='123456',
@@ -97,6 +97,7 @@ class Migration:
 
                     query_sql = "SELECT id,first_time,last_time FROM device_all WHERE device_ip='%s'" % ip
                     update_sql = None
+                    # insert_sql = "222"
                     cursor.execute(query_sql)
                     exist_ip = cursor.fetchone()
                     if exist_ip is not None:
@@ -104,6 +105,8 @@ class Migration:
                             update_sql = "UPDATE device_all SET `first_time`='%s',`update_time`='%s' WHERE id=%s" % (first_time,update_time,exist_ip['id'])
                         elif exist_ip['last_time'].strftime('%Y-%m-%d %H:%M:%S') < last_time.strftime('%Y-%m-%d %H:%M:%S'):
                             update_sql = "UPDATE device_all SET `last_time`='%s',`update_time`='%s' WHERE id=%s" % (last_time,update_time,exist_ip['id'])
+                        else:
+                            update_sql = ""
                     else:
                         insert_sql = "INSERT INTO device_all (`device_ip`, `device_port`, `device_country`, " \
                                      "`device_province`, `device_city`, `protocol`, `vendor`, `first_time`, `last_time`, " \
@@ -114,6 +117,8 @@ class Migration:
                         cursor.execute(insert_sql)
                         self.conn.commit()
                     else:
+                        if update_sql is "":
+                            continue
                         cursor.execute(update_sql)
                         self.conn.commit()
                     sys.stdout.write('\r%s%%' % str(round(reslist.index(res) * 100 / (len(reslist)-1), 2)))
@@ -124,7 +129,7 @@ class Migration:
     def begin(self,tables):
         if len(tables) is 0:
             tables = self.tablenames
-        #self.to_deviceall(self.__get_result(tables))
+        self.to_deviceall(self.__get_result(tables))
         print(tables)
 
 
@@ -138,7 +143,7 @@ def main(*table):
 
 
 if __name__ == '__main__':
-    #main(*sys.argv[1:])
-    m = Migration()
-    print(["result_"+i['table_name'] for i in m.tableinfo])
+    main(*sys.argv[1:])
+    # m = Migration()
+    # print(["result_"+i['table_name'] for i in m.tableinfo])
 
