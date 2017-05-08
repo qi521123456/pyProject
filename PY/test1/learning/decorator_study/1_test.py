@@ -11,7 +11,7 @@ def log(logorfunc='default_call'):
         """ a decorator taking in a func and returning a wrapper func
         """
         @functools.wraps(func)
-        def wrapper(*args, **kw):
+        def wrapper1(*args, **kw):
             """ prints some log around the execution
                 of the func taken in
             """
@@ -19,7 +19,7 @@ def log(logorfunc='default_call'):
             ret = func(*args, **kw)
             print('end %s %s():' % (acstr, func.__name__))
             return ret  # need to return the return value of func here
-        return wrapper
+        return wrapper1
 
     if isinstance(logorfunc, str):  # check the para's type
         acstr = logorfunc
@@ -48,7 +48,7 @@ def now3():
     """
     print('2017-1-13')
 
-print(now('qqq'))
+print(now("1"))
 # for f in (now, now2, now3):
 #     f()
 #     print("f's name is: %s\n" % f.__name__)
