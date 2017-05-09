@@ -79,8 +79,9 @@ def get_txt(filename):
                 lines.append(segflag)
                 continue
             sl = line.strip()
-
-            if sl[-1] == '-':
+            if len(sl) < 1:
+                continue
+            if sl[-1] is '-':
                 sl = sl[:-1]
             lines.append(sl)
         context = ' '.join(lines)
