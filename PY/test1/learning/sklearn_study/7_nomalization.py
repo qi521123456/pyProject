@@ -32,6 +32,7 @@ X, y = make_classification(
 # plt.scatter(X[:, 0], X[:, 1], c=y)
 # plt.show()
 X = preprocessing.scale(X)  # normalization
+X2 = preprocessing.minmax_scale(X,feature_range=(0,1))  # 可控制范围
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 clf = SVC()
 clf.fit(X_train, y_train)
