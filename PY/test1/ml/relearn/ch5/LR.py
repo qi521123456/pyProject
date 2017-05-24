@@ -27,7 +27,7 @@ def gradAscent(dataMatIn, classLabels):
     m, n = np.shape(dataMatrix)
     alpha = 0.001
     maxCycles = 500
-    weights = np.ones((n, 1))
+    weights = np.ones((n,1))
     for k in range(maxCycles):  # heavy on matrix operations
         h = sigmoid(dataMatrix * weights)  # matrix mult
         error = (labelMat - h)  # vector subtraction
@@ -44,6 +44,7 @@ def plotBestFit(weights):
     ycord1 = []
     xcord2 = []
     ycord2 = []
+
     for i in range(n):
         if int(labelMat[i]) == 1:
             xcord1.append(dataArr[i, 1])
@@ -55,9 +56,10 @@ def plotBestFit(weights):
     ax = fig.add_subplot(111)
     ax.scatter(xcord1, ycord1, s=30, c='red', marker='s')
     ax.scatter(xcord2, ycord2, s=30, c='green')
-    x = np.mat(np.arange(-3.0, 3.0, 0.1))
+    x = np.linspace(-3,3,50)
+    weights = np.array(weights)
     y = (-weights[0] - weights[1] * x) / weights[2]
-    print(x,y)
+    # print(np.array(y))
     ax.plot(x, y)
     plt.xlabel('X1')
     plt.ylabel('X2')
@@ -134,5 +136,6 @@ def multiTest():
     print("after %d iterations the average error rate is: %f" % (numTests, errorSum / float(numTests)))
 if __name__ == '__main__':
     dataMat,label = loadDataSet()
-    w = gradAscent(dataMat,label)
+    w = stocGradAscent0(dataMat,label)
+    print(w)
     plotBestFit(w)

@@ -4,7 +4,7 @@ import sys,time,threading
 
 logging.basicConfig()
 
-zk = KazooClient(hosts='192.168.202.129:2181',read_only=True)
+zk = KazooClient(hosts='45.76.24.153:2181',read_only=True)
 zk.start()
 # while True:
 #     zk.start()
@@ -42,10 +42,10 @@ def my_listener(state):
         # Handle being connected/reconnected to Zookeeper
         print('ee')
 
-@zk.ChildrenWatch("/my/favorite")
-def watch_children(children):
-    print("Children are now: %s" % children)
-@zk.DataWatch("/result")
+# @zk.ChildrenWatch("/my/favorite")
+# def watch_children(children):
+#     print("Children are now: %s" % children)
+# @zk.DataWatch("/result")
 def watch_node(data, stat):
     print("Version: %s, data: %s" % (stat.version, data.decode("utf-8")))
 
@@ -60,9 +60,9 @@ def watch_node(data, stat):
 #             print("Read/Write mode!")
 #time.sleep(15)
 #zk.stop()
-@zk.ChildrenWatch("/my/favorite")
-def watch_children(children):
-    print("2Children are now: %s" % children)
+# @zk.ChildrenWatch("/my/favorite")
+# def watch_children(children):
+#     print("2Children are now: %s" % children)
 
 message = zk.get("/tasks")
 data = {"msgType":"taskMsg","scanNodes":["22","3","10.0.10.10","192.168.202.129"],'taskId':"2",
@@ -76,14 +76,14 @@ script = b'["--\\r\\n-- required packages for this script\\r\\n--\\r\\n\\r\\n-- 
 d2 = {"msgType":"taskMsg","taskId":1,"taskName":"ShanDongS7","scanStrategy":"protocol_sniffer","scanIp":ips,
 "protocol":[{"id":1,"protocolName":"S7Comm","protocolPort":"80","portType":"TCP"}],"province":"370000",
 "script":eval(script.decode()),
-"scanNodes":["192.168.202.129"]}
+"scanNodes":["45.32.172.82","45.32.174.173"]}
 
-# zk.set("/tasks",str(d2).encode())
+zk.set("/tasks",str(d2).encode())
 print(message[1][4])
 
-result_data = {'node_ip': '192.168.202.129', 'task_id': '1', 'task_strategy': 'protocol_sniffer', 'result_name': '192.168.202.129-1.zip', 'msg_type': 'task_result', 'task_status': 'done'}
-
-zk.set("/result",str(result_data).encode())
+# result_data = {'node_ip': '192.168.202.129', 'task_id': '1', 'task_strategy': 'protocol_sniffer', 'result_name': '192.168.202.129-1.zip', 'msg_type': 'task_result', 'task_status': 'done'}
+#
+# zk.set("/result",str(result_data).encode())
 
 
 zk.stop()
