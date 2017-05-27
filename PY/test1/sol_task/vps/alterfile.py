@@ -1,11 +1,14 @@
 import os,time
-from kazoo.client import KazooClient
-# for i in range(3,11):
-#     try:
-#         host = "vps"+str(i)
-#         info1 = os.popen("ssh "+host+" 'mv /opt/sol_netscan/net_sniffer.py /opt/sol_netscan/net_sniffer.py.bak'")
-#         info2 = os.popen("ssh " + host + " 'mv /opt/sol_netscan/utils.py /opt/sol_netscan/utils.py.bak'")
-#         info3 = os.popen("scp /root/temp/* root@%s:/opt/sol_netscan/")
-#     except:
-#         print(i,"--wrong--")
+for i in range(2,11):
+    try:
+        host = "vps"+str(i)
+        # info = os.popen("ssh " + host + " 'ps aux|grep python3'")
+        time.sleep(1)
+        os.popen("ssh " + host + " 'rm /opt/sol_netscan/utils*'")
+        time.sleep(1)
+        os.popen("scp /root/temp/* root@%s:/opt/sol_netscan/" % host)
+        time.sleep(1)
+        os.popen("ssh "+ host + " 'python3 /opt/sol_netscan/net_sniffer.py'")
+    except:
+        print(i,"--wrong--")
 

@@ -73,7 +73,8 @@ def stocGradAscent0(dataMatrix, classLabels):
     for i in range(m):
         h = sigmoid(sum(dataMatrix[i] * weights))
         error = classLabels[i] - h
-        weights = weights + alpha * error * dataMatrix[i]
+        tmp = alpha * error * np.array(dataMatrix[i])
+        weights = weights + tmp
     return weights
 
 
@@ -81,14 +82,14 @@ def stocGradAscent1(dataMatrix, classLabels, numIter=150):
     m, n = np.shape(dataMatrix)
     weights = np.ones(n)  # initialize to all ones
     for j in range(numIter):
-        dataIndex = range(m)
+        dataIndex = m
         for i in range(m):
             alpha = 4 / (1.0 + j + i) + 0.0001  # apha decreases with iteration, does not
-            randIndex = int(np.random.uniform(0, len(dataIndex)))  # go to 0 because of the constant
+            randIndex = int(np.random.uniform(0, dataIndex))  # go to 0 because of the constant
             h = sigmoid(sum(dataMatrix[randIndex] * weights))
             error = classLabels[randIndex] - h
-            weights = weights + alpha * error * dataMatrix[randIndex]
-            del (dataIndex[randIndex])
+            weights = weights + alpha * error * np.array(dataMatrix[randIndex])
+            dataIndex -= 1
     return weights
 
 
@@ -129,13 +130,14 @@ def colicTest():
 
 
 def multiTest():
-    numTests = 10
+    numTests = 50
     errorSum = 0.0
     for k in range(numTests):
         errorSum += colicTest()
     print("after %d iterations the average error rate is: %f" % (numTests, errorSum / float(numTests)))
 if __name__ == '__main__':
     dataMat,label = loadDataSet()
-    w = stocGradAscent0(dataMat,label)
+    w = stocGradAscent1(dataMat,label)
     print(w)
-    plotBestFit(w)
+    # plotBestFit(w)
+    multiTest()

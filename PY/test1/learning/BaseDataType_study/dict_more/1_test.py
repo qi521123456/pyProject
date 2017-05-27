@@ -15,4 +15,5 @@ def get_down_node():  # 若5次没有收到节点状态数据则认为该节点d
 # get_down_node()
 # for (key, value) in nodeIps.items(): # items
 #     print(key,value)
-print(nodeIps.get('s'))
+print(nodeIps.get('3'))
+# dict.get("key") 如果key不在dict中返回None
