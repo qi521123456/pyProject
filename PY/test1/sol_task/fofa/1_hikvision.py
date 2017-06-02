@@ -158,6 +158,6 @@ def addCheck(jsonPath):
     checkIps = scanIps(info)
     alter_check(checkIps)
 if __name__ == "__main__":
-    uncheck2mysql("D:/test_e/xlkh/")
-
+    # uncheck2mysql("D:/test_e/xlkh/")
+    print(getinfo("D:/INTELBRAS.json"))
 
