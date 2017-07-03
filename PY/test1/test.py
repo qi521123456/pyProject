@@ -40,8 +40,8 @@
 
 # import re,os
 # print(re.search('w3w','2www/33rew'))
-str1 = 'wft4wrt/rgrs'
-print(str1.rfind('/'),str1[:str1.rfind('/')],str1[7:])
+# str1 = 'wft4wrt/rgrs'
+# print(str1.rfind('/'),str1[:str1.rfind('/')],str1[7:])
 # print('wertrd/24'.split('/'))
 #
 # print(os.path.exists('d:/tmp/script'))
@@ -49,6 +49,9 @@ print(str1.rfind('/'),str1[:str1.rfind('/')],str1[7:])
 #print(['Google', 'Runoob', 'Taobao', 'Baidu'][::-1])
 # for i in [2, 3, 4].reverse():
 #     print(i)
-import sys,os
-print(r'D:\WorkFile\PY\test1' in sys.path,sys.path)
-print(sys.path[0][:sys.path[0].rfind('\\')],os.getcwd())
+import sys,os,datetime
+for i in range(1,11):
+
+    print(datetime.datetime.now().strftime('%y-%m-%d %H:%M:%S'))
+# print(r'D:\WorkFile\PY\test1' in sys.path,sys.path)
+# print(sys.path[0][:sys.path[0].rfind('\\')],os.getcwd())
