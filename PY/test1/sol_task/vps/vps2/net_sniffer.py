@@ -115,8 +115,12 @@ class Consumer:
         save_result = utils.Env.master_target+utils.ip2topic("/tasks") + "-" + task_id + ".zip"
         save_host = "root@%s:%s" % (utils.Env.master_ip,save_result)
         # os.popen("cp %s %s" % (scan_result,save_result))
-        os.popen("scp %s %s" % (scan_result, save_host))
-        #print("scp ok,savehost:",save_host)
+        # os.system("scp %s %s" % (scan_result, save_host))
+        scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        scp_process.wait()
+        while scp_process.returncode!=0:
+            pass
+        g_logger.info("scp ok,savehost:",save_host)
         result_name = utils.ip2topic("/tasks") + "-" + task_id + ".zip"
         task_result = utils.TaskResult(task.task_strategy,task_id,utils.TaskStatus.DONE.value, result_name)
         try:

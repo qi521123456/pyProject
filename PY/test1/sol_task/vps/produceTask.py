@@ -92,7 +92,7 @@ d3 = {'taskId': 1, 'scanNodes': ['/tasks@45.76.15.241', '/task2@45.76.15.241'], 
 # zk.set("/tasks",str(d3).encode())
 # zk.set("/task2",str(d3).encode())
 # zk.set("/task3",str(d2).encode())
-message = zk.get("/task3")
+message = zk.get("/task2")
 msg1 = eval(message[0].decode())
 print(msg1)
 
