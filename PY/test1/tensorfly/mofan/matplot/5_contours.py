@@ -9,7 +9,7 @@ n = 256
 x = np.linspace(-3, 3, n)
 y = np.linspace(-3, 3, n)
 X,Y = np.meshgrid(x, y)
-print(f(X,Y))
+# print(f(X,Y))
 # use plt.contourf to filling contours
 # X, Y and value for (X,Y) point
 plt.contourf(X, Y, f(X, Y), 8, alpha=.75, cmap=plt.cm.hot)

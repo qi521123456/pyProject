@@ -217,4 +217,8 @@ def getworld(filename):
 
 
 if __name__ == '__main__':
-    getchina("E:/china.csv")
+    # getchina("E:/china.csv")
+    en2zh = {}
+    for d in nameMap:
+        en2zh[nameMap[d]] = d
+    print(en2zh)

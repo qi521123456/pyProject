@@ -3,7 +3,7 @@ import numpy as np
 
 n = 12
 X = np.arange(n)
-print(X)
+print(type(X))
 Y1 = (1 - X / float(n)) * np.random.uniform(0.5, 1.0, n)
 Y2 = (1 - X / float(n)) * np.random.uniform(0.5, 1.0, n)
 
