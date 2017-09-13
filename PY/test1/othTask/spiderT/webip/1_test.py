@@ -15,14 +15,16 @@ def getdata(ips,port):
         data['time'] = datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")
         data['ip'] = ip
         try:
-            q = requests.get(url, timeout=3)
+            q = requests.get(url, timeout=1)
+            print(q)
             data['status_code'] = q.status_code
             data['header'] = dict(q.headers)
             data['content'] = str(q.content)
-        except requests.exceptions.ConnectTimeout:
+        except:  # connectionTimeout,readTimeout,
             data['status_code'] = ""
             data['header'] = ""
             data['content'] = ""
+
         l.append(data)
     return l
 def splitips(file):
@@ -46,11 +48,23 @@ def splitips(file):
                 ips_5.append(line)
 
 def data2json(data,file):
-    with open(file,'w') as fw:
+    with open(file,'a+',encoding='utf8') as fw:
         for i in data:
             fw.write(json.dumps(i)+'\n')
+def main(ipfile,port,writefile,n=100):
+    with open(ipfile,'r') as fr:
+        lines = fr.readlines()
+        write_lines = []
+        for i,ip in enumerate(lines):
+            write_lines.append(ip.strip())
+            if i%n==0 and i!=0:
+                data2json(getdata(write_lines,port),writefile)
+                write_lines = []
+        if len(write_lines)!=0:
+            data2json(getdata(write_lines, port), writefile)
 
 
 if __name__ == '__main__':
-    l = getdata(["175.148.64.18","166.166.166.166"],80)
-    data2json(l,'E:/test.json')
+    # l = getdata(["175.148.64.18","166.166.166.166"],80)
+    # data2json(l,'E:/test.json')
+    main("E:/80port.txt",80,"E:/test.json")
