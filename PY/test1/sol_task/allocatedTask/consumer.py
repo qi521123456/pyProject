@@ -1,19 +1,17 @@
 import subprocess,threading
-import os,time,socket,shutil,sys
+import os,time,shutil,sys
 from queue import Queue
 from enum import Enum
 
 class Utils:
     @classmethod
     def localIp(cls):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            s.connect(('1.255.255.255', 0))
-            ip = s.getsockname()[0]
+            c = os.popen("env|grep hostip")
+            s = c.read().split("=")
+            ip = s[1].strip()
         except:
             ip = '127.0.0.1'
-        finally:
-            s.close()
         return str(ip)
     @classmethod
     def localPath(cls):
@@ -28,12 +26,12 @@ class Env:
     TaskDir = PATH+"task/"
     TaskRecvDir = TaskDir+"recv/"
     MasterIp = "192.168.120.33"
-    MasterZmapResDir = '/root/data/tmp/'
-    MasterNmapResDir = '/root/data/backup/protocol/'
+    MasterZmapResDir = '/home/lmq/data/tmp/'
+    MasterNmapResDir = '/home/lmq/data/backup/protocol/'
     LocalIp = Docker+"-"+Utils.localIp()
 class ScanType(Enum):
     PORT = "port"
-    PROTOCAL = "protocal"
+    PROTOCOL = "protocol"
 class TaskStatus(Enum):
     INIT = "init"
     RUNNING = "running"

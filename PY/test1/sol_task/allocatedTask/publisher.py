@@ -38,7 +38,9 @@ class Env:
     TmpTaskDir = "/root/data/task/tmp/"
     ResultDir = "/root/data/result/"
     ZmapResBackupDir = "/root/data/backup/portscan/"
-    NmapResBackupDir = "/root/data/backup/protocalscan/"
+    NmapResBackupDir = "/root/data/backup/protocolscan/"
+    def __str__(self):
+        return [self.Config,self.ScriptsDir,self.TaskDir,self.ZmapTaskPath,self.NmapTaskPath,self.TmpDir,self.TmpTaskDir,self.ResultDir,self.ZmapResBackupDir,self.NmapResBackupDir]
 
 class zTask:
     def __init__(self,taskid,type,port,zmaphosts,nmaphosts,scriptname,pct,ips,ipfile):
@@ -232,5 +234,5 @@ if __name__ == '__main__':
     # n = threading.Thread(target=nPublish().getTmp)
     # z.start()
     # n.start()
-    t = nTask(1,"w",45,[4,5,6],"ww","re","qw")
-    print(t)
+    for i in Env().__str__():
+        print(i)

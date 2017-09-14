@@ -50,7 +50,12 @@ def splitips(file):
 def data2json(data,file):
     with open(file,'a+',encoding='utf8') as fw:
         for i in data:
-            fw.write(json.dumps(i)+'\n')
+            try:
+                fw.write(json.dumps(i)+'\n')
+            except:
+                pass
+
+
 def main(ipfile,port,writefile,n=100):
     with open(ipfile,'r') as fr:
         lines = fr.readlines()
@@ -65,6 +70,4 @@ def main(ipfile,port,writefile,n=100):
 
 
 if __name__ == '__main__':
-    # l = getdata(["175.148.64.18","166.166.166.166"],80)
-    # data2json(l,'E:/test.json')
-    main("E:/80port.txt",80,"E:/test.json")
+    main("E:/80port.txt",80,"E:/test.json",100)
