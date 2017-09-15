@@ -26,21 +26,23 @@ class Utils:
                 fw.writelines(il)
         return n
 class Env:
-    Config = "/root/data/config/config"
+    Config = "/home/lmq/data/config/config"
     ConfigSeconds = 5
-    ScriptsDir = "/root/data/scripts"
-    TaskDir = "/root/data/task/z/"
-    ZmapTaskPath = "/root/data/"
+    ScriptsDir = "/home/lmq/data/scripts/"
+    TaskDir = "/home/lmq/data/task/z/"
 
-    NmapTaskPath = "/root/data/"
-    TmpDir = "/root/data/tmp/"
+    ZmapTaskPath = "/home/lmqdcs/"
+    NmapTaskPath = "/home/lmqdcs/"
+    EndzntDir = "/task/recv/"
+
+    TmpDir = "/home/lmq/data/tmp/"
     TmpSeconds = 60
-    TmpTaskDir = "/root/data/task/tmp/"
-    ResultDir = "/root/data/result/"
-    ZmapResBackupDir = "/root/data/backup/portscan/"
-    NmapResBackupDir = "/root/data/backup/protocolscan/"
+    TmpTaskDir = "/home/lmq/data/task/n/"
+    # ResultDir = "/home/lmq/data/result/"
+    ZmapResBackupDir = "/home/lmq/data/backup/portscan/"
+    NmapResBackupDir = "/home/lmq/data/backup/protocolscan/"
     def __str__(self):
-        return [self.Config,self.ScriptsDir,self.TaskDir,self.ZmapTaskPath,self.NmapTaskPath,self.TmpDir,self.TmpTaskDir,self.ResultDir,self.ZmapResBackupDir,self.NmapResBackupDir]
+        return [self.Config,self.ScriptsDir,self.TaskDir,self.ZmapTaskPath,self.NmapTaskPath,self.TmpDir,self.TmpTaskDir,self.ZmapResBackupDir,self.NmapResBackupDir]
 
 class zTask:
     def __init__(self,taskid,type,port,zmaphosts,nmaphosts,scriptname,pct,ips,ipfile):
@@ -114,7 +116,7 @@ class zPublish:
     def p2zmap(self):
         taskdir = Env.TaskDir
         zmappath = Env.ZmapTaskPath
-        ztdir = "/task/"
+        ztdir = Env.EndzntDir
         while True:
             if self.tasks.isEmpty():
                 time.sleep(Env.ConfigSeconds)
@@ -124,12 +126,12 @@ class zPublish:
             tasktype = task.type
             port = task.port
             zmapHosts = task.zmaphosts
-            nmapHosts = task.nmaphosts
+            # nmapHosts = task.nmaphosts
             scriptname = task.scriptname
             pct = task.pct
             ips = task.ips
             ipfile = task.ipfile
-            zipname = taskid + "-" + tasktype + "-" + port + "-" + str(nmapHosts) + "-" + scriptname +"-"+pct+ ".zip"
+            zipname = taskid + "-" + tasktype + "-" + port + "-" + str(zmapHosts) + "-" + scriptname +"-"+pct+ ".zip"
             zippath = taskdir + zipname
             if ips != "" and type(eval(ips)) is list:
                 ipfile = taskdir + "white.txt"
@@ -138,8 +140,9 @@ class zPublish:
                         fw.write(ip + "\n")
             n = Utils.spp(zmapHosts,ipfile,taskdir)
             for zhost in zmapHosts[:n]:
-                with zipfile.ZipFile(zippath, 'w', compression=zipfile.ZIP_DEFLATED) as zfw:
-                    zfw.write(taskdir+zhost+".txt", "white.txt")
+                # with zipfile.ZipFile(zippath, 'w', compression=zipfile.ZIP_DEFLATED) as zfw:
+                #     zfw.write(taskdir+zhost+".txt", "white.txt")
+                os.system("zip -j %s %s"%(zippath,taskdir+zhost+".txt"))
                 os.system("rm -f %s"% taskdir+zhost+".txt")
                 dh = zhost.split("@")
                 docker = dh[0]
@@ -194,7 +197,7 @@ class nPublish:
         scriptdir = Env.ScriptsDir
         s = Env.TmpSeconds
         nmaptaskpath = Env.NmapTaskPath
-        ntdir = "/task/"
+        ntdir = Env.EndzntDir
         while True:
             if self.tasks.isEmpty():
                 time.sleep(s)
@@ -213,7 +216,7 @@ class nPublish:
             zipname = task+".zip"
             zippath = ttdir+zipname
             for nhost in nmapHosts[:n]:
-                os.system("zip %s %s %s"%(zippath,ttdir+nhost+".txt",scriptdir+scriptname+".nse"))
+                os.system("zip -j %s %s %s"%(zippath,ttdir+nhost+".txt",scriptdir+scriptname+".nse"))
                 os.system("rm -f %s"% ttdir+nhost+".txt")
                 dh = nhost.split("@")
                 docker = dh[0]

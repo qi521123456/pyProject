@@ -5,14 +5,17 @@ from enum import Enum
 
 class Utils:
     @classmethod
-    def localIp(cls):
+    def localAddr(cls):
         try:
             c = os.popen("env|grep hostip")
             s = c.read().split("=")
             ip = s[1].strip()
+            mc = os.popen("env|grep mac")
+            mac = mc.read().split("=")[1].strip()
         except:
             ip = '127.0.0.1'
-        return str(ip)
+            mac = '02:42:f1:ce:03:eb'
+        return str(ip),str(mac)
     @classmethod
     def localPath(cls):
         s = "/"
@@ -23,12 +26,13 @@ class Utils:
         return path+s,docker
 class Env:
     PATH,Docker = Utils.localPath()
+    locip,MAC = Utils.localAddr()
     TaskDir = PATH+"task/"
     TaskRecvDir = TaskDir+"recv/"
     MasterIp = "192.168.120.33"
     MasterZmapResDir = '/home/lmq/data/tmp/'
-    MasterNmapResDir = '/home/lmq/data/backup/protocol/'
-    LocalIp = Docker+"-"+Utils.localIp()
+    MasterNmapResDir = '/home/lmq/data/backup/protocolscan/'
+    LocalIp = Docker+"@"+locip
 class ScanType(Enum):
     PORT = "port"
     PROTOCOL = "protocol"
@@ -73,7 +77,7 @@ class Consume:
         self.taskmgt = taskmgt
     def __zmap_command(self, task_env, task):
         os.system("/sbin/ldconfig")
-        command = ['zmap', '-B', '1M', '-p', str(task.port), '-o', task_env+str(task.taskid)+"-"+self.env.LocalIp+".txt", '-w', task_env+"white.txt"]
+        command = ['zmap', '-B', '1M','-G',self.env.MAC, '-p', str(task.port), '-o', task_env+str(task.taskid)+"-"+self.env.LocalIp+".txt", '-w', task_env+"white.txt"]
         return command
     def __nmap_command(self,task_env, task):
         cmd = ['nmap','-Pn',task.pct,'--script',task_env+task.scriptname+".nse",'-p',str(task.port),'-iL',task_env+"white.txt",'-oX',task_env+str(task.taskid)+"-"+self.env.LocalIp+".xml"]
@@ -163,12 +167,12 @@ class Produce:
                         shutil.rmtree(task_env)
                     os.mkdir(task_env)
                     unzip = "unzip -o "+recvDir+filename+" -d "+task_env
+                    print(unzip)
                     os.system(unzip)
                     txt = "white.txt"
                     for i in os.listdir(task_env):
-                        if i.rfind(".txt") !=-1:
-                            txt = i
-                    os.rename(task_env+"/"+txt,task_env+"white.txt")
+                        if i.rfind(".txt") !=-1 and i!=txt:
+                            os.rename(task_env+i,task_env+txt)
                     tasks.addTask(task)
 
                     os.remove(recvDir+filename)
@@ -180,5 +184,8 @@ class Produce:
 if __name__ == '__main__':
     # taskmgt = TaskMgt()
     # Produce(taskmgt).produce()
-    s = "1-p-['we','weq']--"
-    print(s.split("-"))
+    txt = "white.txt"
+    task_env = "E:/1/"
+    for i in os.listdir(task_env):
+        if i.rfind(".txt") != -1 and i != txt:
+            os.rename(task_env + i, task_env + txt)

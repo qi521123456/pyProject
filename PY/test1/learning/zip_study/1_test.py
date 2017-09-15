@@ -12,8 +12,9 @@ def upzip():
 
 # upzip()
 
-with open('D:/test.zip','rb') as zfile:
-    result = zfile.read()
-print(result)
-with open('D:/new.zip','wb') as new:
-   new.write(result)
+# with open('D:/test.zip','rb') as zfile:
+#     result = zfile.read()
+
+with zipfile.ZipFile('D:/new.zip','w',compression=zipfile.ZIP_DEFLATED) as new:
+   new.write("D:/hello.txt","oo.txt")
+
