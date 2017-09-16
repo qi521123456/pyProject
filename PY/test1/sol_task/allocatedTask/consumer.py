@@ -29,9 +29,9 @@ class Env:
     locip,MAC = Utils.localAddr()
     TaskDir = PATH+"task/"
     TaskRecvDir = TaskDir+"recv/"
-    MasterIp = "192.168.120.33"
-    MasterZmapResDir = '/home/lmq/data/tmp/'
-    MasterNmapResDir = '/home/lmq/data/backup/protocolscan/'
+    # MasterIp = "192.168.120.33"
+    MasterZmapResDir = '/home/lmqdcs/result/z/'
+    MasterNmapResDir = '/home/lmqdcs/result/n/'
     LocalIp = Docker+"@"+locip
 class ScanType(Enum):
     PORT = "port"
@@ -91,14 +91,13 @@ class Consume:
 
         scan_result = task_env + task_id + "-" + self.env.LocalIp + ".zip"
         save_result = self.env.MasterZmapResDir + str(task.taskid)+"-"+task.type+"-"+str(task.port)+"-"+str(task.nmaphosts)+"-"+task.scriptname+"-"+task.pct + "-" + self.env.LocalIp + ".zip"
-        save_host = "root@%s:%s" % (self.env.MasterIp, save_result)
-        scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE,
+        scp_process = subprocess.Popen("cp %s %s" % (scan_result, save_result), shell=True, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
         scp_process.wait()
         while scp_process.returncode != 0:
             pass
         # passg_logger.info("scp ok,savehost:",save_host)
-        print("scp ok,savehost:", save_host)
+        print("cp ok,save:", save_result)
     def __nmap_zip(self,task_env,task):
         task_id = str(task.taskid)
         d_target = task_env + task_id +"-"+self.env.LocalIp+ ".zip"
@@ -106,14 +105,14 @@ class Consume:
 
         scan_result = task_env + task_id + "-" + self.env.LocalIp + ".zip"
         save_result = self.env.MasterNmapResDir + task_id + "-" + self.env.LocalIp + ".zip"
-        save_host = "root@%s:%s" % (self.env.MasterIp, save_result)
-        scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE,
+        # save_host = "root@%s:%s" % (self.env.MasterIp, save_result)
+        scp_process = subprocess.Popen("cp %s %s" % (scan_result, save_result), shell=True, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
         scp_process.wait()
         while scp_process.returncode != 0:
             pass
         # passg_logger.info("scp ok,savehost:",save_host)
-        print("scp ok,savehost:", save_host)
+        print("cp ok,save:", save_result)
 
     def consume(self):
         tasks = self.taskmgt
