@@ -43,5 +43,6 @@ def spp(hosts,file,path):
 if __name__ == '__main__':
     #toNfile("E:/q1/","E:/1.txt",57)
     #toNfile("E:/q11/110000/", "E:/110000.txt", 18)
-    l = [2,4,6,7,9,1]
-    print(l[:6])
+    hs = ['docker1@192.168.202.1','docker2']
+    n = spp(hs,"E:/1.txt","e:/1/")
+    print(n)

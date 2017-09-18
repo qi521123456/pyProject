@@ -67,13 +67,13 @@ class nTask:
     def __str__(self):
         nhs = "["
         for i in self.nmaphosts:
-            nhs = nhs + "'" + str(i) + "',"
-        nhs = nhs.strip(",") + "]"
-        return str(self.taskid) + "-" + self.type + "-" + str(self.port) + "-" + str(
-            nhs) + "-" + self.scriptname + "-" + self.pct
+            nhs = nhs+"'"+str(i)+"',"
+        nhs = nhs.strip(",")+"]"
+        return str(self.taskid)+"-"+self.type+"-"+str(self.port)+"-"+str(nhs)+"-"+self.scriptname+"-"+self.pct
 class TaskMgt:
-    task_queue = Queue(maxsize=0)
-    tasks = []
+    def __init__(self):
+        self.task_queue = Queue(maxsize=0)
+        self.tasks = []
     def addTask(self,task):
         self.task_queue.put(task)
         self.tasks.append(task)
@@ -110,7 +110,7 @@ class zPublish:
                         tasktype = d.get("type")
                         port = str(d.get("port"))
                         zmapHosts = eval(d.get("zmaphosts"))
-                        nmapHosts = eval(d.get("nmaphosts"))
+                        nmapHosts = d.get("nmaphosts")
                         scriptname = d.get("scriptname")
                         pct = d.get("pct")
                         task = zTask(tid,tasktype,port,zmapHosts,nmapHosts,scriptname,pct,ips,ipfile)
@@ -138,6 +138,7 @@ class zPublish:
             ipfile = task.ipfile
             zipname = taskid + "-" + tasktype + "-" + port + "-" + str(nmapHosts) + "-" + scriptname +"-"+pct+ ".zip"
             zippath = taskdir + zipname
+            print(zippath)
             if ips != "" and type(eval(ips)) is list:
                 ipfile = taskdir + "white.txt"
                 with open(ipfile, 'w', encoding="utf8") as fw:
@@ -174,7 +175,7 @@ class nPublish:
                 if ntime-mtime>=s:
                     fns = filename[:filename.rfind(".zip")]
                     info = fns.split("-")
-                    if len(info)==2:
+                    if info[1] == "port":
                         zmv = "mv %s %s"%(f,zrbd)
                         os.system(zmv)
                     else:
@@ -191,8 +192,8 @@ class nPublish:
                         task = nTask(taskid,tasktype,port,nmapHosts,scriptname,pct,ihost)
                         uzip = "unzip -o %s -d %s"%(f,ttdir)
                         os.system(uzip)
+                        print(uzip)
                         os.system("rm -f %s"% f)
-                        os.rename(ttdir + "white.txt", fns+".txt")
 
                         self.tasks.addTask(task)
                 continue
@@ -216,10 +217,12 @@ class nPublish:
             scriptname = task.scriptname
             pct = task.pct
             ihost = task.ihost
-            whitetxt = ttdir+str(task)+"-"+ihost+".txt"
+            #os.rename(ttdir + str(taskid)+"-"+ihost+".txt", ttdir + str(task)+"-"+ihost + ".txt")
+            # whitetxt = ttdir+str(task)+"-"+ihost+".txt"
+            whitetxt = ttdir + str(taskid)+"-"+ihost+".txt"
             n = Utils.spp(nmapHosts, whitetxt, ttdir)
             os.system("rm -f %s" % whitetxt)
-            zipname = task+".zip"
+            zipname = str(task)+".zip"
             zippath = ttdir+zipname
             for nhost in nmapHosts[:n]:
                 os.system("zip -j %s %s %s"%(zippath,ttdir+nhost+".txt",scriptdir+scriptname+".nse"))
@@ -239,10 +242,8 @@ class nPublish:
 
 
 if __name__ == '__main__':
-    # z = threading.Thread(target=zPublish().getConfig)
-    # n = threading.Thread(target=nPublish().getTmp)
-    # z.start()
-    # n.start()
-    t = nTask(2,"w",56,[1,34,6],"weqq","ips","3.5")
-    print(str(t)+".txt")
+    z = threading.Thread(target=zPublish().getConfig)
+    n = threading.Thread(target=nPublish().getTmp)
+    z.start()
+    n.start()
 

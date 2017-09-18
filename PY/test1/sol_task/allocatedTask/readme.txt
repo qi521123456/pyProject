@@ -18,5 +18,5 @@ nmap结点至主结点,backup/protocal/:
 	
 	
 config:  
-	{"id":1,"type":"protocal","port":80,"zmaphosts":"['docker1@10.2.2.2','docker2@10.2.2.2','docker1@10.5.5.5']","nmaphosts":"['docker2@10.9.9.98']","ips":"[]","ipfile":"/data/10000.txt","scriptname":"s7comm","pct":"-sU"}
-	{"id":2,"type":"port","port":161,"zmaphosts":"['docker1@10.2.2.2']","nmaphosts":"[]","ips":"['202.2.2.2/24','56.6.6.6/24']","ipfile":"","scriptname":"","pct":"-sS"}
+	{"id":1,"type":"protocal","port":80,"zmaphosts":"['docker1@10.2.2.2','docker2@10.2.2.2','docker1@10.5.5.5']","nmaphosts":"['docker2@10.9.9.98']","ips":"[]","ipfile":"/data/10000.txt","scriptname":"s7comm","pct":"sU"}
+	{"id":2,"type":"port","port":161,"zmaphosts":"['docker1@10.2.2.2']","nmaphosts":"[]","ips":"['202.2.2.2/24','56.6.6.6/24']","ipfile":"","scriptname":"","pct":"sS"}

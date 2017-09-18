@@ -80,7 +80,7 @@ class Consume:
         command = ['zmap', '-B', '1M','-G',self.env.MAC, '-p', str(task.port), '-o', task_env+str(task.taskid)+"-"+self.env.LocalIp+".txt", '-w', task_env+"white.txt"]
         return command
     def __nmap_command(self,task_env, task):
-        cmd = ['nmap','-Pn',task.pct,'--script',task_env+task.scriptname+".nse",'-p',str(task.port),'-iL',task_env+"white.txt",'-oX',task_env+str(task.taskid)+"-"+self.env.LocalIp+".xml"]
+        cmd = ['nmap','-Pn','-'+task.pct,'--script',task_env+task.scriptname+".nse",'-p',str(task.port),'-iL',task_env+"white.txt",'-oX',task_env+str(task.taskid)+"-"+self.env.LocalIp+".xml"]
         return cmd
 
     def __zmap_zip(self,task_env, task):
