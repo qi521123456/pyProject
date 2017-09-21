@@ -1,5 +1,6 @@
 import requests
 import json,datetime
+import os
 
 def getdata(ips,port):
     l = []
@@ -27,25 +28,6 @@ def getdata(ips,port):
 
         l.append(data)
     return l
-def splitips(file):
-    ips_1 = []
-    ips_2 = []
-    ips_3 = []
-    ips_4 = []
-    ips_5 = []
-    with open(file,'r') as fr:
-        lines = fr.readlines()
-        for i,line in enumerate(lines):
-            if i%5==0:
-                ips_1.append(line)
-            elif i%5==1:
-                ips_2.append(line)
-            elif i%5==2:
-                ips_3.append(line)
-            elif i%5==3:
-                ips_4.append(line)
-            else:
-                ips_5.append(line)
 
 def data2json(data,file):
     with open(file,'a+',encoding='utf8') as fw:
@@ -56,12 +38,19 @@ def data2json(data,file):
                 pass
 
 
-def main(ipfile,port,writefile,n=100):
+def main(ipfile,port,writepath,n=100,perfileN=10000):
+    if not os.path.exists(writepath):
+        os.makedirs(writepath)
     with open(ipfile,'r') as fr:
         lines = fr.readlines()
         write_lines = []
+        x = 1
+        writefile = writepath+"hello.json"
         for i,ip in enumerate(lines):
             write_lines.append(ip.strip())
+            if i%perfileN==0:
+                writefile = writepath + str(x) + ".json"
+                x += 1
             if i%n==0 and i!=0:
                 data2json(getdata(write_lines,port),writefile)
                 write_lines = []
@@ -70,4 +59,4 @@ def main(ipfile,port,writefile,n=100):
 
 
 if __name__ == '__main__':
-    main("E:/80port.txt",80,"E:/test.json",100)
+    main("E:/1.txt",80,"E:/s1/",5,10)

@@ -28,7 +28,7 @@ class Env:
     MasterIp = "192.168.120.33"
     MasterZmapResDir = '/home/lmq/data/tmp/'
     MasterNmapResDir = '/home/lmq/data/backup/protocolscan/'
-    LocalIp = Docker+"-"+Utils.localIp()
+    LocalIp = Docker+"@"+Utils.localIp()
 class ScanType(Enum):
     PORT = "port"
     PROTOCOL = "protocol"
