@@ -1,5 +1,4 @@
 from numpy import *
-import sklearn
 def loadSimpData():
     datMat = matrix([[ 1. ,  2.1],
         [2.,  1.1],
