@@ -32,10 +32,23 @@ def transport(ips):
         a.start()
         b.start()
 
+def trickal(ips):
+    zs = []
+    ns = []
+    for i in range(1,5):
+        docker = "docker"+str(i)+"@"
+        for ip in ips:
+            if int(ip.split('.')[-1])<13:
+                zs.append(docker+ip)
+            else:ns.append(docker+ip)
+    print(zs,ns)
+
 if __name__ == '__main__':
     ips = ["10.132.181.10","10.132.181.11","10.132.181.12","10.132.181.13","10.132.181.16",
            "10.132.181.18","10.132.181.19","10.132.181.20","10.132.181.21","10.132.181.28",
            "10.132.181.29","10.132.181.3","10.132.181.4","10.132.181.44","10.132.181.7",
            "10.132.181.8","10.132.181.9"]
-    write2auth(ips)
+
+    #write2auth(ips)
     # transport(ips)
+    trickal(ips)

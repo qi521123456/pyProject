@@ -84,7 +84,7 @@ def adaBoostTrainDS(dataArr,classLabels,numIt=45):
         errorRate = aggErrors.sum()/m
         #print("total error: ",errorRate)
         if errorRate == 0.0: break
-    return weakClassArr
+    return weakClassArr,aggClassEst
 
 def adaClassify(dataToClass,classifierArr):
     dataMatrix = mat(dataToClass)
@@ -96,14 +96,45 @@ def adaClassify(dataToClass,classifierArr):
         #print(aggClassEst)
     return sign(aggClassEst)
 
+def plotROC(predStrengths,classLabels):
+    import matplotlib.pyplot as plt
+    cur = (1.0,1.0)
+    ySum = 0.0
+    numPosClas = sum(array(classLabels)==1.0)
+    yStep = 1/float(numPosClas)
+    xStep = 1/float(len(classLabels)-numPosClas)
+    sortedIndicies = predStrengths.argsort()
+    fig = plt.figure()
+    fig.clf()
+    ax = plt.subplot(111)
+    for index in sortedIndicies.tolist()[0]:
+        if classLabels[index] == 1.0:
+            delX = 0
+            delY = yStep
+        else:
+            delX = xStep
+            delY = 0
+            ySum += cur[1]
+        ax.plot([cur[0],cur[0-delX]],[cur[1],cur[1]-delY],c='b')
+        cur = (cur[0]-delX,cur[1]-delY)
+    ax.plot([0,1],[0,1],'b--')
+    plt.xlabel('假阳率')
+    plt.ylabel('真阳率')
+    plt.title("ROC曲线")
+    ax.axis([0,1,0,1])
+    plt.show()
+    print(ySum*xStep)
+
+
 if __name__ == '__main__':
-    datMat, labels = loadDataSet("E:/horseColicTraining2.txt")
-    c = adaBoostTrainDS(datMat,labels)
+    datMat, labels = loadDataSet("/home/mannix/data/ml/Ch07/horseColicTraining2.txt")
+    c,a = adaBoostTrainDS(datMat,labels)
+    plotROC(a.T,labels)
     #print(c)
-    testArr,testLabels = loadDataSet("E:/horseColicTest2.txt")
-    r = adaClassify(testArr,c)
-    m = len(testLabels)
-    err = mat(ones((m,1)))
-    print(err[r!=mat(testLabels).T].sum()/m)
+    # testArr,testLabels = loadDataSet("/home/mannix/data/ml/Ch07/horseColicTest2.txt")
+    # r = adaClassify(testArr,c)
+    # m = len(testLabels)
+    # err = mat(ones((m,1)))
+    # print(err[r!=mat(testLabels).T].sum()/m)
     # print(multiply(False,11))
     #print(arange(9.0).reshape(9,1))

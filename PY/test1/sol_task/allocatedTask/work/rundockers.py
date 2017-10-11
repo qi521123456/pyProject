@@ -2,7 +2,7 @@ import os,sys
 
 PATH = "/opt/scan/"
 dockername = "znscan"
-def getipaddr(iname="wlp8s0", mname="docker0"):
+def getipaddr(iname="enp4s0f0", mname="docker0"):
     info = os.popen("ifconfig").read()
     il = info.split("\n")
     for x,i in enumerate(il):
@@ -31,13 +31,13 @@ def makedenv(pyname,path=PATH):
     for i in cpl:
         os.system(i)
 
-def rundocker(pyname="zdn",macname="enp2s0f0"):
+def rundocker(pyname="zdn"):
     try:
         makedenv(pyname)
     except:
         #print "wrong makeenv"
         sys.exit(0)
-    ip,mac = getipaddr(macname)
+    ip,mac = getipaddr()
     for i in range(1,5):
         docker = "docker"+str(i)
         rc = 'nohup docker run --env hostip="'+ip+'" --env mac="'+mac+'" -v '+PATH+':'+PATH+' '+dockername+' python3 '+PATH+docker+pyname+'.py +> /dev/nill 2>&1 &'
@@ -45,5 +45,5 @@ def rundocker(pyname="zdn",macname="enp2s0f0"):
         #print rc
 
 if __name__ == '__main__':
-    a(sys.argv[1])
+    rundocker(sys.argv[1])
 
