@@ -4,7 +4,7 @@ import logging, os
 class Logger:
     def __init__(self, path, clevel=logging.DEBUG, Flevel=logging.DEBUG):
         self.logger = logging.getLogger(path)
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
         fmt = logging.Formatter('[%(asctime)s] [%(levelname)s][%(name)s] %(message)s', '%Y-%m-%d %H:%M:%S')
         # 设置CMD日志
         sh = logging.StreamHandler()
@@ -17,7 +17,7 @@ class Logger:
         fh = logging.FileHandler(path)
         fh.setFormatter(fmt)
         #fh.setLevel(Flevel)
-        self.logger.addHandler(sh)
+        # self.logger.addHandler(sh)
         self.logger.addHandler(fh)
 
     def debug(self, message):
@@ -37,7 +37,8 @@ class Logger:
 
 
 if __name__ == '__main__':
-    logyyx = Logger('D:/yyx.log', logging.ERROR, logging.DEBUG)
+    logyyx = Logger('D:/wlog/yyx.log', logging.ERROR, logging.DEBUG)
+    os.system("nmap 192.168.205.51")
     logyyx.debug('一个debug信息')
     logyyx.info('一个info信息')
     logyyx.war('一个warning信息')

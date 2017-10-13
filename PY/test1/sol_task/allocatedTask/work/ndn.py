@@ -2,6 +2,7 @@ import subprocess,threading
 import os,time,shutil,sys
 from queue import Queue
 from enum import Enum
+import logging
 
 class Utils:
     @classmethod
@@ -25,9 +26,9 @@ class Env:
     PATH,Docker = Utils.localPath()
     TaskDir = PATH+"task/"
     TaskRecvDir = TaskDir+"recv/"
-    MasterIp = "192.168.120.33"
-    MasterZmapResDir = '/home/lmq/data/tmp/'
-    MasterNmapResDir = '/home/lmq/data/backup/protocolscan/'
+    # MasterIp = "192.168.120.33"
+    MasterZmapResDir = '/opt/scan/result/z/'
+    MasterNmapResDir = '/opt/scan/result/n/'
     LocalIp = Docker+"@"+Utils.localIp()
 class ScanType(Enum):
     PORT = "port"
@@ -36,7 +37,23 @@ class TaskStatus(Enum):
     INIT = "init"
     RUNNING = "running"
     DONE = "done"
-
+class Logging:
+    def __init__(self,path):
+        self.logger = logging.getLogger()
+        self.shandler = logging.StreamHandler()
+        if not os.path.exists(path):
+            file_dir = path[:path.rfind('/')]
+            os.makedirs(file_dir)
+        self.fhandler = logging.FileHandler(path)
+        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def get_logger(self):
+        self.logger.setLevel(logging.INFO)
+        self.shandler.setFormatter(self.formatter)
+        self.fhandler.setFormatter(self.formatter)
+        self.logger.addHandler(self.shandler)
+        self.logger.addHandler(self.fhandler)
+        return self.logger
+logger = Logging("/opt/scan/logs/"+Env.Docker+".log").get_logger()
 
 class Task:
     def __init__(self,taskid,type,port,nmaphosts,scriptname,pct):
@@ -77,6 +94,7 @@ class Consume:
 
     def __nmap_zip(self,task_env,task):
         task_id = str(task.taskid)
+        logger.info("nmap over id is '%s'" % task_id)
         d_target = task_env + task_id +"-"+self.env.LocalIp+ ".zip"
         os.system("zip -j %s %s" % (d_target, (task_env + "*.xml")))
 
@@ -89,7 +107,7 @@ class Consume:
         while scp_process.returncode != 0:
             pass
         # passg_logger.info("scp ok,savehost:",save_host)
-        print("cp ok,save:", save_result)
+        logger.info("cp ok,save:", save_result)
 
     def consume(self):
         tasks = self.taskmgt
@@ -101,6 +119,7 @@ class Consume:
             task_env = self.env.TaskDir+task.taskid+"/"
             cmd = self.__nmap_command(task_env, task)
             child = subprocess.Popen(cmd, close_fds=True, preexec_fn=os.setpgrp)
+            logger.info("start nmap '%s'" % cmd)
             task.process = child
             task.status = self.taskStatus.RUNNING
             task.process.communicate()
@@ -110,7 +129,7 @@ class Consume:
             try:
                 shutil.rmtree(task_env)
             except OSError:
-                print("can't delete dirs: %s" % task_env)
+                logger.error("can't delete dirs: %s" % task_env)
 
 class Produce:
     def __init__(self, taskmgt):
@@ -144,14 +163,15 @@ class Produce:
                     os.mkdir(task_env)
                     unzip = "unzip -o "+recvDir+filename+" -d "+task_env
                     os.system(unzip)
+                    logger.info("recive task '%s',unzip over '%s'" % (taskid, unzip))
                     txt = "white.txt"
                     for i in os.listdir(task_env):
                         if i.rfind(".txt") !=-1:
                             txt = i
                     os.rename(task_env+"/"+txt,task_env+"white.txt")
                     tasks.addTask(task)
-
                     os.remove(recvDir+filename)
+                    logger.info("push task in queue,remove file %s" % filename)
 
 
 

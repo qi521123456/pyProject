@@ -1,7 +1,7 @@
 import os,threading
 
 def genkey(ip):
-    cmd = '''ssh '''+ip+''' "ssh-keygen -t rsa -P ''"'''
+    cmd = '''ssh '''+ip+''' "ssh-keygan -t rsa -P '' -f /root/.ssh/my_rsa"'''
     os.system(cmd)
     key = os.popen("ssh "+ip+" 'cat /root/.ssh/my_rsa.pub'").read()
     return key
@@ -27,28 +27,30 @@ def getfromip(ip):
 
 def transport(ips):
     for ip in ips:
-        a = threading.Thread(target=tran2ip,args=(ip,))
-        b = threading.Thread(target=getfromip,args=(ip,))
-        a.start()
+        #a = threading.Thread(target=tran2ip,args=ip)
+        b = threading.Thread(target=getfromip,args=ip)
+        #a.start()
         b.start()
 
-def trickal(ips):
-    zs = []
-    ns = []
-    for i in range(1,5):
-        docker = "docker"+str(i)+"@"
-        for ip in ips:
-            if int(ip.split('.')[-1])<13:
-                zs.append(docker+ip)
-            else:ns.append(docker+ip)
-    print(zs,ns)
+def transnodeenv(ips):
+    nmapHosts = []
+    for ip in ips:
+        # os.system("ssh "+ip+" 'mkdir /home/lmq'")
+        # cmd = "scp /home/lmq/nodes/* root@" + ip + ":/home/lmq"
+        # os.system(cmd)
+        for i in range(1,5):
+            nmapHosts.append(str(i)+"@"+ip.split('.')[-1])
+
+    nps = "+".join(nmapHosts)
+    zipname = str(1) + "-" + "port" + "-" + str(80) + "-" + nps + "-" + "HTTP" + "-" + "sS" + ".zip"
+    print(zipname)
+
 
 if __name__ == '__main__':
-    ips = ["10.132.181.10","10.132.181.11","10.132.181.12","10.132.181.13","10.132.181.16",
+    ips132 = ["10.132.181.10","10.132.181.11","10.132.181.12","10.132.181.13","10.132.181.16",
            "10.132.181.18","10.132.181.19","10.132.181.20","10.132.181.21","10.132.181.28",
            "10.132.181.29","10.132.181.3","10.132.181.4","10.132.181.44","10.132.181.7",
            "10.132.181.8","10.132.181.9"]
-
-    #write2auth(ips)
-    # transport(ips)
-    trickal(ips)
+    ips102 = ['10.102.120.39', '10.102.120.40', '10.102.120.41', '10.102.120.42', '10.102.120.43', '10.102.120.44', '10.102.120.45', '10.102.120.46', '10.102.120.47', '10.102.120.48', '10.102.120.49', '10.102.120.50']
+    #transport(ips102)
+    transnodeenv(ips132)
