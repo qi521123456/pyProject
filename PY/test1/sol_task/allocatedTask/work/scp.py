@@ -33,7 +33,7 @@ def monitordir(src,dst):
         for filename in files:
             if filename.rfind(".zip") == -1:
                 continue
-            mtime = os.path.getmtime(src)
+            mtime = os.path.getmtime(src+filename)
             ntime = time.time()
             if ntime-mtime>=MonitorSeconds:
                 target = "root@%s:%s"%(MasterIp,dst)

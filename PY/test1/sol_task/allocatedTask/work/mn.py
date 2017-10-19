@@ -123,7 +123,7 @@ class zPublish:
                         tasktype = d.get("type")
                         port = str(d.get("port"))
                         zmapHosts = eval(d.get("zmaphosts"))
-                        nmapHosts = d.get("nmaphosts")
+                        nmapHosts = eval(d.get("nmaphosts"))
                         scriptname = d.get("scriptname")
                         pct = d.get("pct")
                         task = zTask(tid,tasktype,port,zmapHosts,nmapHosts,scriptname,pct,ips,ipfile)
@@ -192,20 +192,20 @@ class nPublish:
                 if ntime-mtime>=s:
                     fns = filename[:filename.rfind(".zip")]
                     info = fns.split("-")
-                    if info[1] == "port":
-                        zmv = "mv %s %s"%(f,zrbd)
+                    taskid = info[0]
+                    port = info[2]
+                    ihost = info[6]
+                    if port == "port":
+                        zmv = "mv %s %s"%(f,zrbd+taskid+"-"+ihost+".zip")
                         os.system(zmv)
                     else:
-                        taskid = info[0]
-                        port = info[2]
                         tasktype = info[1]
                         try:
                             nmapHosts = eval(info[3])
-                        except SyntaxError:
+                        except:
                             nmapHosts = info[3].split("+")
                         scriptname = info[4]
                         pct = info[5]
-                        ihost = info[6]
                         task = nTask(taskid,tasktype,port,nmapHosts,scriptname,pct,ihost)
                         uzip = "unzip -o %s -d %s"%(f,ttdir)
                         os.system(uzip)
