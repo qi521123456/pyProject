@@ -11,7 +11,8 @@ s = 'whar-is jjj'
 print(s[:s.rfind('s')-2],len(s))
 #__import__('shutil').rmtree("D:/北京/")
 print(os.path.exists("D:/北京/"))
-
+print("'qwe‘w‘’'".replace("‘","+").replace("’","+").encode("utf-8"))
+print(str("aa".encode("utf8")))
 # print("i am a boy '{0}'".format(1))
 #
 # # eval
