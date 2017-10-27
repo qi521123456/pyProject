@@ -1,6 +1,7 @@
 import requests
 import json,datetime
 import os
+from bs4 import BeautifulSoup
 
 def getdata(ips,port):
     l = []
@@ -17,10 +18,21 @@ def getdata(ips,port):
         data['ip'] = ip
         try:
             q = requests.get(url, timeout=1)
-            print(q)
             data['status_code'] = q.status_code
-            data['header'] = dict(q.headers)
-            data['content'] = str(q.content)
+            data['server'] = dict(q.headers)
+            soup = BeautifulSoup(q.content,from_encoding='utf8')
+            head = {}
+            head['title'] = soup.title.string
+            for child in soup.head.children:
+                if child.name=="meta":
+                    attr = child.attrs
+                    if attr.get('name') is not None:
+                        head[attr['name']]=attr['content']
+            data['head'] = head
+            body = ""
+            for bodystr in soup.body.stripped_strings:
+                body+="\t"+bodystr
+            data['body'] = body.strip()
         except:  # connectionTimeout,readTimeout,
             data['status_code'] = ""
             data['header'] = ""
@@ -59,4 +71,6 @@ def main(ipfile,port,writepath,n=100,perfileN=10000):
 
 
 if __name__ == '__main__':
-    main("E:/1.txt",80,"E:/s1/",5,10)
+    #main("E:/1.txt",80,"E:/s1/",5,10)
+    q = requests.get("http://115.29.11.141", timeout=1)
+    print(getdata(['115.29.11.141'],80))
