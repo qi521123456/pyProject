@@ -19,25 +19,36 @@ def getdata(ips,port):
         try:
             q = requests.get(url, timeout=1)
             data['status_code'] = q.status_code
-            data['server'] = dict(q.headers)
+            q_header = {}
+            qh = dict(q.headers)
+            for k in qh:
+                if k is not None and qh[k] is not None:
+                    q_header[k.strip('').strip('.').replace('.','-')] = qh[k].strip('').strip('.')
+            data['server'] =q_header
             soup = BeautifulSoup(q.content,from_encoding='utf8')
             head = {}
-            head['title'] = soup.title.string
-            for child in soup.head.children:
-                if child.name=="meta":
-                    attr = child.attrs
-                    if attr.get('name') is not None:
-                        head[attr['name']]=attr['content']
-            data['head'] = head
             body = ""
-            for bodystr in soup.body.stripped_strings:
-                body+="\t"+bodystr
-            data['body'] = body.strip()
-        except:  # connectionTimeout,readTimeout,
-            data['status_code'] = ""
-            data['header'] = ""
-            data['content'] = ""
+            try:
+                for bodystr in soup.body.stripped_strings:
+                    body += "\t" + bodystr
+                data['body'] = body.strip()
 
+                head['title'] = soup.title.string
+                for child in soup.head.children:
+                    if child.name=="meta":
+                        attr = child.attrs
+                        if attr.get('name') is not None:
+                            key = attr['name'].strip('.').replace('.','-')
+                            value = attr['content']
+                            if key.lower().find("date")!=-1 or key.find("DC")!=-1:
+                                continue
+                            head[key]=value
+                data['head'] = head
+            except:
+                pass
+        except:  # connectionTimeout,readTimeout,
+            data['head'] = ""
+            data['body'] = ""
         l.append(data)
     return l
 
@@ -72,5 +83,4 @@ def main(ipfile,port,writepath,n=100,perfileN=10000):
 
 if __name__ == '__main__':
     #main("E:/1.txt",80,"E:/s1/",5,10)
-    q = requests.get("http://115.29.11.141", timeout=1)
-    print(getdata(['115.29.11.141'],80))
+    print(getdata(['211.147.11.26'],80))
