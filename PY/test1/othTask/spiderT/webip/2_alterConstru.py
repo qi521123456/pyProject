@@ -25,8 +25,6 @@ def alterCon(src,dst):
     for f in os.listdir(src):
         if f[-4:]!="json":
             continue
-        if f!="12.json":
-            continue
         print(f)
         path = os.path.join(src,f)
         try:
@@ -96,10 +94,11 @@ def _keyFormat(v):
     return v.strip('').strip('.').replace('.','-')
 
 if __name__ == '__main__':
-    splitByLines("E:/camera2.txt","E:/camera/2/",1000)
+    # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["13","25"]
-    # for i in l:
-    #     src = "E:/httpjson_10"+i+"/"
-    #     dst = 'E:/httpjson_10'+i+'/hj10'+i+'/'
-    #     thread = threading.Thread(target=alterCon,args=(src,dst,))
-    #     thread.start()
+    # for j in range(13,20):
+    #     i = str(j)
+    src = "E:/"
+    dst = 'E:/p/'
+    thread = threading.Thread(target=alterCon,args=(src,dst,))
+    thread.start()
