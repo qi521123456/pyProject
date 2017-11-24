@@ -1,4 +1,6 @@
 import os
+
+import datetime,ijson
 from bs4 import BeautifulSoup
 import threading
 import gc
@@ -30,10 +32,16 @@ def alterCon(src,dst):
         try:
             fw = open(os.path.join(dst,f),'w',encoding='utf8')
             with open(path,'r',encoding='utf8') as fr:
+
                 for line in fr:
                     if line.strip()=='':
                         continue
-                    idata = _cdata(eval(line.strip()))
+
+                    try:
+                        idata = _cdata(eval(line.strip()))
+                    except:
+                        print(line)
+                        exit(0)
                     #print(idata)
                     fw.write(str(idata)+'\n')
                     # gc.collect()
@@ -49,7 +57,22 @@ def _cdata(s):
             q_header = {}
             qh = dict(s[k])
             for i in qh:
-                q_header[_keyFormat(i)] = qh[i]
+                if i is not None and qh[i] is not None:
+                    if i=="Last-Modified" or i=="Date" or i=="Expires":
+                        s = qh[i]
+                        GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+                        try:
+                            d = datetime.datetime.strptime(s, GMT_FORMAT)
+                            if not isinstance(d,datetime.datetime):
+                                continue
+                        except:
+                            continue
+                    try:
+                        if len(i)<3 or type(int(i))==int:
+                            continue
+                    except:
+                        pass
+                    q_header[i.strip('').strip('.').replace('.','-').lower()] = qh[i].strip('').strip('.')
             data['server'] = q_header
         elif k=='content':
             if s[k] != '':
@@ -60,8 +83,9 @@ def _cdata(s):
                     for child in soup.head.children:
                         if child.name == "meta":
                             attr = child.attrs
-                            if attr.get('name') is not None:
-                                head[_keyFormat(attr['name'])] = attr['content']
+                            name = attr.get('name')
+                            if name is not None and name.strap()!="" and name.find("time")==-1:
+                                head[_keyFormat(attr['name']).lower()] = attr['content']
                     data['head'] = head
                     body = ""
                     for bodystr in soup.body.stripped_strings:
@@ -85,7 +109,21 @@ def _repl(s):
             qh = dict(s[k])
             for i in qh:
                 if i is not None and qh[i] is not None:
-                    q_header[i.strip('').strip('.').replace('.','-')] = qh[i].strip('').strip('.')
+                    if i=="Last-Modified" or i=="Date":
+                        s = qh[i]
+                        GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+                        try:
+                            d = datetime.datetime.strptime(s, GMT_FORMAT)
+                            if not isinstance(d,datetime.datetime):
+                                continue
+                        except:
+                            continue
+                    try:
+                        if len(i)<3 or type(int(i))==int:
+                            continue
+                    except:
+                        pass
+                    q_header[i.strip('').strip('.').replace('.','-').lower()] = qh[i].strip('').strip('.')
             data[k] = q_header
         else:
             data[k] = s[k]
@@ -95,10 +133,10 @@ def _keyFormat(v):
 
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
-    # l = ["13","25"]
-    # for j in range(13,20):
-    #     i = str(j)
-    src = "E:/"
-    dst = 'E:/p/'
-    thread = threading.Thread(target=alterCon,args=(src,dst,))
-    thread.start()
+    l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
+    for j in l:
+        i = str(j)
+        src = "E:/TASK/tmmmmm/"+i+"/"
+        dst = 'E:/afterprocess/'+i+"/"
+        thread = threading.Thread(target=alterCon,args=(src,dst,))
+        thread.start()

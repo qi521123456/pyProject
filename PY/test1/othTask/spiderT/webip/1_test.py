@@ -1,7 +1,8 @@
 import requests
 import json,datetime
-import os
+import os,time
 from bs4 import BeautifulSoup
+import demjson
 
 def getdata(ips,port):
     l = []
@@ -83,4 +84,6 @@ def main(ipfile,port,writepath,n=100,perfileN=10000):
 
 if __name__ == '__main__':
     #main("E:/1.txt",80,"E:/s1/",5,10)
-    print(getdata(['211.147.11.26'],80))
+    # print(getdata(['211.147.11.26'],80))
+    s = '{"key":"value"}'
+    print(demjson.encode(s))
