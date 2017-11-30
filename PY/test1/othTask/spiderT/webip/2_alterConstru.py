@@ -37,11 +37,11 @@ def alterCon(src,dst):
                     if line.strip()=='':
                         continue
 
-                    try:
-                        idata = _cdata(eval(line.strip()))
-                    except:
-                        print(line)
-                        exit(0)
+                    # try:
+                    idata = _repl(eval(line.strip()))
+                    # except:
+                    #     print(line)
+                    #     exit(0)
                     #print(idata)
                     fw.write(str(idata)+'\n')
                     # gc.collect()
@@ -51,6 +51,7 @@ def alterCon(src,dst):
 
 
 def _cdata(s):
+    # print(type(s))
     data = {}
     for k in s:
         if k=='header':
@@ -102,6 +103,10 @@ def _cdata(s):
     return data
 
 def _repl(s):
+    #print(type(s))
+    if type(s) is not dict:
+        print(s)
+        return {}
     data = {}
     for k in s:
         if k=='server' or k=='head':
@@ -110,10 +115,10 @@ def _repl(s):
             for i in qh:
                 if i is not None and qh[i] is not None:
                     if i=="Last-Modified" or i=="Date":
-                        s = qh[i]
+                        st = qh[i]
                         GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
                         try:
-                            d = datetime.datetime.strptime(s, GMT_FORMAT)
+                            d = datetime.datetime.strptime(st, GMT_FORMAT)
                             if not isinstance(d,datetime.datetime):
                                 continue
                         except:
@@ -126,6 +131,7 @@ def _repl(s):
                     q_header[i.strip('').strip('.').replace('.','-').lower()] = qh[i].strip('').strip('.')
             data[k] = q_header
         else:
+            #print(type(s))
             data[k] = s[k]
     return data
 def _keyFormat(v):
@@ -133,10 +139,10 @@ def _keyFormat(v):
 
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
-    l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
-    for j in l:
-        i = str(j)
-        src = "E:/TASK/tmmmmm/"+i+"/"
-        dst = 'E:/afterprocess/'+i+"/"
-        thread = threading.Thread(target=alterCon,args=(src,dst,))
-        thread.start()
+    # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
+    # for j in l:
+    i = str("hj1109")
+    src = "E:/TASK/"+i+"/"
+    dst = 'E:/afterprocess/'+i+"/"
+    thread = threading.Thread(target=alterCon,args=(src,dst,))
+    thread.start()
