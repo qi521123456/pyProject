@@ -38,7 +38,7 @@ def alterCon(src,dst):
                         continue
 
                     # try:
-                    idata = _repl(eval(line.strip()))
+                    idata = _repl(eval(line.strip().replace("null","None")))
                     # except:
                     #     print(line)
                     #     exit(0)
@@ -141,8 +141,8 @@ if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
     # for j in l:
-    i = str("hj1109")
-    src = "E:/TASK/"+i+"/"
+    i = str("1")
+    src = "D:/"
     dst = 'E:/afterprocess/'+i+"/"
     thread = threading.Thread(target=alterCon,args=(src,dst,))
     thread.start()

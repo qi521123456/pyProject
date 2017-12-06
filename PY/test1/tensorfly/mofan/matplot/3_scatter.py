@@ -13,4 +13,4 @@ plt.xticks(())  # ignore xticks
 plt.ylim(-1.5, 1.5)
 plt.yticks(())  # ignore yticks
 
-plt.show()
+#plt.show()

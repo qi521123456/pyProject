@@ -30,7 +30,7 @@ ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=plt.get_cmap('rainbow'))
 """
 
 # I think this is different from plt12_contours
-ax.contourf(X, Y, Z, zdir='x', offset=4, cmap=plt.get_cmap('rainbow'))  # 投影，offset投影位置
+#ax.contourf(X, Y, Z, zdir='x', offset=4, cmap=plt.get_cmap('rainbow'))  # 投影，offset投影位置
 """
 ==========  ================================================
         Argument    Description
@@ -43,6 +43,6 @@ ax.contourf(X, Y, Z, zdir='x', offset=4, cmap=plt.get_cmap('rainbow'))  # 投影
         ==========  ================================================
 """
 
-ax.set_zlim(-2, 2)
+ax.set_zlim(-2, 2) # z坐标设置
 
 plt.show()
