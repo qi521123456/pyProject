@@ -27,8 +27,9 @@ def alterCon(src,dst):
     for f in os.listdir(src):
         if f[-4:]!="json":
             continue
-        print(f)
+
         path = os.path.join(src,f)
+        print(path)
         try:
             fw = open(os.path.join(dst,f),'w',encoding='utf8')
             with open(path,'r',encoding='utf8') as fr:
@@ -38,13 +39,14 @@ def alterCon(src,dst):
                         continue
 
                     # try:
-                    idata = _repl(eval(line.strip().replace("null","None")))
+                    idata = _cdata(eval(line.strip()))
                     # except:
                     #     print(line)
                     #     exit(0)
                     #print(idata)
                     fw.write(str(idata)+'\n')
                     # gc.collect()
+
             fw.close()
         except MemoryError:
             print("memory error: "+f)
@@ -137,12 +139,22 @@ def _repl(s):
 def _keyFormat(v):
     return v.strip('').strip('.').replace('.','-')
 
+def main(src,dst):
+    for f1 in os.listdir(src):
+        p2 = os.path.join(src,f1)
+        for f2 in os.listdir(p2):
+            p3 = os.path.join(p2,f2)
+            d3 = os.path.join(os.path.join(dst,f1),f2)
+            #print(d3)
+            alterCon(p3,d3)
+
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
-    # for j in l:
-    i = str("1")
-    src = "D:/"
-    dst = 'E:/afterprocess/'+i+"/"
-    thread = threading.Thread(target=alterCon,args=(src,dst,))
-    thread.start()
+    path = "E:/TASK/页面第一轮"
+    for j in os.listdir(path):
+        src = os.path.join(path,j)
+        dst = 'E:/afterprocess/'+j+"/"
+
+        thread = threading.Thread(target=main,args=(src,dst,))
+        thread.start()
