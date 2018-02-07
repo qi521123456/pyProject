@@ -151,7 +151,7 @@ def main(src,dst):
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
-    path = "E:/TASK/webinfo"
+    path = "E:/TASK/webinfo/data/"
     for j in os.listdir(path):
         src = os.path.join(path,j)
         dst = 'E:/afterprocess/'+j+"/"
