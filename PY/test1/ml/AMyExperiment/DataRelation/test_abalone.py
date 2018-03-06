@@ -1,6 +1,6 @@
 import numpy as np
 # abalone 实验
-PATH = "D:/abalone.txt"
+PATH = "/home/mannix/data/abalone.txt"
 def getData(path=PATH):
     X = []
     y = []
@@ -17,7 +17,7 @@ def getData(path=PATH):
 def train_test(X,y,test_size=0.4):
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
-    return np.array(X_train),np.array(X_test),np.array(y_train),np.array(y_test)
+    return np.array(X_train,dtype='float64'),np.array(X_test,dtype='float64'),np.array(y_train,dtype='float64'),np.array(y_test,dtype='float64')
 
 def pca_x(X,n=2):
     from sklearn.decomposition import PCA
