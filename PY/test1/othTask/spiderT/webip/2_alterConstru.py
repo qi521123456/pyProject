@@ -144,17 +144,21 @@ def main(src,dst):
         p2 = os.path.join(src,f1)
         for f2 in os.listdir(p2):
             p3 = os.path.join(p2,f2)
-            d3 = os.path.join(os.path.join(dst,f1),f2)
-            #print(d3)
+            if not os.path.isdir(p3):
+                continue
+            d3 = dst+"/"+f1+"/"+f2
+            print(p3+"--------------"+d3)
             alterCon(p3,d3)
 
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
-    path = "E:/TASK/webinfo/data/"
+    path = "I:/中间人扫描任务/A18"
     for j in os.listdir(path):
-        src = os.path.join(path,j)
-        dst = 'E:/afterprocess/'+j+"/"
-
-        thread = threading.Thread(target=main,args=(src,dst,))
-        thread.start()
+        j1 = os.path.join(path,j)
+        if os.path.isdir(j1):
+            #for i in range(1,4):
+                src = path+"/"+j+"/root/data/"
+                dst = 'E:/afterprocess/18-3-5/'+j
+                thread = threading.Thread(target=main,args=(src,dst,))
+                thread.start()
