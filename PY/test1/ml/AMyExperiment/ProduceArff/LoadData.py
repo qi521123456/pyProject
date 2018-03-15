@@ -4,6 +4,7 @@ from sklearn import svm
 from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import NearestNeighbors
 PATH = "/home/mannix/Desktop/NASADefectDataset/CleanedData/MDP/D'/CM1.arff"
 
 def getData():
@@ -63,21 +64,21 @@ def statDiscre():
         end_X.append(np.dot(np.dot(i,disc_X),i.T))
     return org_X,pos_X,end_X/np.sum(end_X)
 
-def trainBySvm():
+def trainBySvm(X_t,y_t):
 
     #import pandas
     #scaler = preprocessing.StandardScaler()
     le = preprocessing.LabelBinarizer()
-    global X_train, y_train
+    #global X_train, y_train
     parameters = {'kernel': ('linear', 'rbf'), 'C': [1,1.5, 2, 4], 'gamma': [0,0.125, 0.25, 0.5, 1, 2, 4]}
     for scaler in [preprocessing.StandardScaler(),preprocessing.MinMaxScaler(),preprocessing.Normalizer()]:
         print(scaler.__class__)
-        X = scaler.fit_transform(X_train)
+        X = scaler.fit_transform(X_t)
         #for k in ['linear', 'poly', 'rbf', 'sigmoid']:
         #clf = svm.SVC(kernel=k)
-        svr = svm.SVC(class_weight='balanced')
+        svr = svm.SVC()
         clf = GridSearchCV(svr, parameters, n_jobs=-1)
-        clf.fit(X, y_train)
+        clf.fit(X, y_t)
         #cv_result = pd.DataFrame.from_dict(clf.cv_results_)
         #print(clf.cv_results_)
         # sv = clf.support_vectors_
@@ -85,7 +86,6 @@ def trainBySvm():
         print("best params",clf.best_params_)
         # predict = clf.predict(X_test)
         # print("auc:",metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(predict)))
-
 
         y_pred = clf.predict(scaler.fit_transform(X_test))
         print(metrics.classification_report(y_true=y_test, y_pred=y_pred))
@@ -115,11 +115,12 @@ def findSV():
     # print(metrics.classification_report(y_train,pred))
 
 def genNeigMat(pos_X,K):
-    from sklearn.neighbors import NearestNeighbors
+
     neig = NearestNeighbors(n_neighbors=K)
     neig.fit(pos_X)
     # print(np.shape(pos_X))
     return neig.kneighbors(pos_X)[1]
+
 def genPerPoint(p1,p2,beta):
     p1 = np.array(p1)
     p2 = np.array(p2)
@@ -138,22 +139,56 @@ def genPosByDis(pn,beta):
     dis_num = np.around(dis*posGenNum)
     dis_max = np.max(dis_num)
     # dis_num.sort()
-    print(np.sum(dis_num),np.shape(X_train))
-    print(len(np.argwhere(dis_num>0)))
-    print(np.shape(pos_X),np.shape(dis_num))
+    # print(np.sum(dis_num),np.shape(X_train))
+    # print(np.argwhere(dis_num>0))
+    # print(np.shape(pos_X),np.shape(dis_num))
     _K = 10 # 控制近邻数
 
     neigs = genNeigMat(pos_X,min(dis_max,_K))
     # print(neigs)
     gen_pos = []
-    print(dis_num)
-    for i,e in enumerate(dis_num):
+    # print(dis_num)
+    # dis_all = np.sum(dis_num)
+    dis_gt_K = np.argwhere(dis_num>_K)
+
+    plus_gen_num = 0
+    for idx in dis_gt_K:
+        plus_gen_num+=(dis_num[idx[0]]-_K)
+    per_plus = plus_gen_num//(len(dis_num)-len(dis_gt_K))
+    new_dis_num = dis_num+per_plus
+    # print(new_dis_num)
+    for i,e in enumerate(new_dis_num):
         j = 1
         while j<=min(e,_K-1):
-            print(i,"--",j)
+            # print(i,"--",j)
             gen_pos.append(genPerPoint(org_X[i],org_X[neigs[i][j]],beta))
             j+=1
-    return gen_pos
+    y_lable = ['Y']*len(gen_pos)
+    return gen_pos,y_lable
+
+def ennClearn(X,y,k1=7,k2=10):
+    neig = genNeigMat(X,k2+1)
+    newX = []
+    newY = []
+    for i,e in enumerate(neig):
+        j = 1
+        count=0
+        while j<=k2:
+            if y[e[j]] != y[i]:
+                count+=1
+            j+=1
+        if count<k1:
+            newX.append(X[i])
+            newY.append(y[i])
+    return newX,newY
+
 if __name__ == '__main__':
-    ps = genPosByDis(.8,.2)
-    print(np.shape(ps))
+    ps,py = genPosByDis(.8,.2)
+    ps.extend(X_train)
+    py.extend(y_train)
+    print(np.shape(ps),np.shape(py))
+    newX,newY = ennClearn(ps,py)
+    print(np.shape(newX),np.shape(newY))
+    trainBySvm(ps,py)
+    print("-------------------------------------------------------")
+    trainBySvm(newX,newY)
