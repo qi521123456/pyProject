@@ -2,7 +2,7 @@ import logging, os
 
 
 class Logger:
-    def __init__(self, path, clevel=logging.DEBUG, Flevel=logging.DEBUG):
+    def __init__(self, path, clevel=logging.DEBUG, Flevel=logging.WARNING):
         self.logger = logging.getLogger(path)
         self.logger.setLevel(logging.INFO)
         fmt = logging.Formatter('[%(asctime)s] [%(levelname)s][%(name)s] %(message)s', '%Y-%m-%d %H:%M:%S')
@@ -37,8 +37,8 @@ class Logger:
 
 
 if __name__ == '__main__':
-    logyyx = Logger('D:/wlog/yyx.log', logging.ERROR, logging.DEBUG)
-    os.system("nmap 192.168.205.51")
+    logyyx = Logger('home/mannix/Desktop/yyx.log', logging.DEBUG, logging.DEBUG)
+    os.system("ping -c 4 baidu.com")
     logyyx.debug('一个debug信息')
     logyyx.info('一个info信息')
     logyyx.war('一个warning信息')
