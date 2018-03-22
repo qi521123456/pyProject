@@ -14,7 +14,7 @@ print(score.mean())
 
 predict = model_selection.cross_val_predict(clf,iris.data,iris.target,cv=10)
 print(metrics.accuracy_score(iris.target,predict))
-# print(metrics.average_precision_score(iris.target,predict)) 只能2分类
+print(metrics.average_precision_score(iris.target,predict)) #只能2分类
 print(metrics.f1_score(iris.target,predict,average='macro'))
 print(metrics.auc(iris.target,predict))
 print(metrics.roc_curve(iris.target,predict,pos_label=2))

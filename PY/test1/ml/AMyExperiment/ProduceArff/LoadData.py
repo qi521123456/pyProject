@@ -88,7 +88,9 @@ def trainBySvm(X_t,y_t):
         # print("auc:",metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(predict)))
 
         y_pred = clf.predict(scaler.fit_transform(X_test))
+        print("auc:", metrics.roc_auc_score(le.fit_transform(y_test), le.fit_transform(y_pred)))
         print(metrics.classification_report(y_true=y_test, y_pred=y_pred))
+
 
 def findSV():
     '''
@@ -119,6 +121,7 @@ def genNeigMat(pos_X,K):
     neig = NearestNeighbors(n_neighbors=K)
     neig.fit(pos_X)
     # print(np.shape(pos_X))
+
     return neig.kneighbors(pos_X)[1]
 
 def genPerPoint(p1,p2,beta):
