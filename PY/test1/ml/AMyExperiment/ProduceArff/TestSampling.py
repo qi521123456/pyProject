@@ -50,9 +50,9 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         # pred = le.fit_transform(pred)
 
         roc_auc += metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(pred),average="micro")
-        precision += metrics.precision_score(y_test,pred,average="binary",pos_label='Y')
-        recall += metrics.recall_score(y_test,pred,average='binary',pos_label='Y')
-        f1 += metrics.f1_score(y_test,pred,average="binary",pos_label='Y')
+        # precision += metrics.precision_score(y_test,pred,average="micro")
+        # recall += metrics.recall_score(y_test,pred,average='micro')
+        # f1 += metrics.f1_score(y_test,pred,average="micro")
 
         # ap += metrics.average_precision_score(y_test,pred)
         # print(metrics.classification_report(y_test, pred))
@@ -61,20 +61,25 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         #     k_num -=1
     if k_num<=0:
         k_num =1
-    print(roc_auc/k_num,'\t',precision/k_num,'\t',recall/k_num,'\t',f1/k_num)
+    # print(roc_auc/k_num,'\t',precision/k_num,'\t',recall/k_num,'\t',f1/k_num)
+    print(roc_auc / k_num)
 
 
 
 if __name__ == '__main__':
     from NASAMDPSDPdata import AllData
+    from sklearn.naive_bayes import GaussianNB
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.ensemble import RandomForestClassifier
     data = AllData()
     for ovs in [RandomOverSampler, SMOTE, ADASYN, myOverSampling, SMOTETomek, SMOTEENN]:
-        if ovs in [RandomOverSampler,SMOTE]:
-            continue
+        # if ovs in [RandomOverSampler,SMOTE]:
+        #     continue
         print(ovs.__name__)
+
         for d in data:
             name = d.get('name')
             X = np.array(d.get('X'))
             y = np.array(d.get('y'))
-            print( name,end='\t')
-            kfCV(X,y,over_sampling=ovs)
+            # print( name,end='\t')
+            kfCV(X,y,over_sampling=ovs,clf=RandomForestClassifier())

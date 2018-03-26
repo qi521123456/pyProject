@@ -14,3 +14,8 @@ body = {"size":10,"query":{
                  }
 res = es.search(index="norn",doc_type="ResultProbe",body=body)
 print(res)
+
+from elasticsearch import helpers
+helpers.scan()
+es.search()
+es.scroll
