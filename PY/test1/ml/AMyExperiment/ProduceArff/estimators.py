@@ -1,6 +1,6 @@
 from NASAMDPSDPdata import AllData
 from sklearn.model_selection import GridSearchCV
-
+from sklearn import ensemble
 def NB():
     from sklearn.naive_bayes import GaussianNB
     clf = GaussianNB().fit(X_train, y_train)
@@ -16,3 +16,6 @@ def dt():
 
 def rf():
     from sklearn.ensemble import RandomForestClassifier
+
+if __name__ == '__main__':
+    pass
