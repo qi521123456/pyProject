@@ -122,7 +122,7 @@ class Consume:
         os.system("zip -j %s %s" % (d_target, s_target))
         scan_result = task_env + task_id + "-" + self.env.LocalIp + ".zip"
         save_result = self.env.MasterZmapResDir + str(task.taskid)+"-"+task.type+"-"+str(task.port)+"-"+str(task.nmaphosts)+"-"+task.scriptname+"-"+task.pct + "-" + self.env.LocalIp + ".zip"
-        scp_process = subprocess.Popen("cp %s %s" % (scan_result, save_result), shell=True, stdout=subprocess.PIPE,                                       stderr=subprocess.PIPE)
+        scp_process = subprocess.Popen("cp %s %s" % (scan_result, save_result), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         scp_process.wait()
         while scp_process.returncode != 0:
             pass
