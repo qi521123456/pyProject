@@ -11,8 +11,8 @@ class Logger:
         sh.setFormatter(fmt)
         #sh.setLevel(clevel)
         # 设置文件日志
-        if not os.path.exists(path):
-            file_dir = path[:path.rfind('/')]
+        file_dir = path[:path.rfind('/')]
+        if not os.path.exists(file_dir):
             os.makedirs(file_dir)
         fh = logging.FileHandler(path)
         fh.setFormatter(fmt)
@@ -37,7 +37,7 @@ class Logger:
 
 
 if __name__ == '__main__':
-    logyyx = Logger('home/mannix/Desktop/yyx.log', logging.DEBUG, logging.DEBUG)
+    logyyx = Logger("C:/Users/LMQ/Documents/dumps/a/b/a.txt", logging.DEBUG, logging.DEBUG)
     os.system("ping -c 4 baidu.com")
     logyyx.debug('一个debug信息')
     logyyx.info('一个info信息')
