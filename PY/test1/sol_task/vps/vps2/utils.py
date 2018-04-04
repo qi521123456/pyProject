@@ -5,18 +5,21 @@ import psutil
 import time
 
 def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(('1.255.255.255', 0))
-        ip = s.getsockname()[0]
+        c = os.popen("env|grep hostip")
+        s = c.read().split("=")
+        ip = s[1].strip()
+        mc = os.popen("env|grep mac")
+        mac = mc.read().split("=")[1].strip()
     except:
         ip = '127.0.0.1'
-    finally:
-        s.close()
-    return ip
+        mac = '02:42:f1:ce:03:eb'
+    return str(ip)
 
-def ip2topic(topic):
-    return topic+"@"+get_ip()
+def docker2ip():
+    path = os.path.split(os.path.realpath(__file__))[0]
+    docker = path[path.rfind('/')+1:]
+    return docker+"@"+get_ip()
 class Logging:
 
     def __init__(self):
@@ -39,14 +42,17 @@ class Logging:
 
 
 class Env:
+    zk_topic_task = '/tasks'
+    zk_topic_result = '/result'
+    zk_topic_node = '/node'
+
     task_dir = '/opt/netscan/scan_task/'
     scan_script = '/opt/netscan/script/'
     province_src = '/opt/province/'
     log_name = '/opt/netscan/logs/log.log'
     # kafla_hosts = "45.76.24.153:9092"
     zookeeper_hosts = "45.76.24.153:2181"
-    master_ip = '45.76.24.153'
-    # master_ip = '45.76.24.153'
+    # master_ip = '45.76.24.153' # 由于docker内连不到外界，将结果传到共享文件夹，然后由同意scp脚本来传输
     master_target = '/opt/net_scan/scan_result/'
 
 
@@ -72,7 +78,7 @@ class TaskResult:
         self.task_id = str(taskID)
         self.task_status = str(taskStatus)
         self.result_name = str(taskResult)
-        self.node_ip = get_ip()
+        self.node_ip = docker2ip()
 
     def __str__(self):
         #return "{'msgType':"+self.msg_type+",'taskID':"+self.task_id+",'taskStatus':"+self.task_status+"," \

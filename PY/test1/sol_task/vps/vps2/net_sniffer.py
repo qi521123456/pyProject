@@ -112,21 +112,21 @@ class Consumer:
             os.system("zip -j %s %s" % (d_target, (task_env+"*.xml")))
 
         scan_result = task_env + task_id + ".zip"
-        save_result = utils.Env.master_target+utils.ip2topic("/tasks") + "-" + task_id + ".zip"
-        save_host = "root@%s:%s" % (utils.Env.master_ip,save_result)
-        # os.popen("cp %s %s" % (scan_result,save_result))
+        save_result = utils.Env.master_target+utils.ip2topic() + "-" + task_id + ".zip"
+        # save_host = "root@%s:%s" % (utils.Env.master_ip,save_result)
+        os.system("cp %s %s" % (scan_result,save_result))
         # os.system("scp %s %s" % (scan_result, save_host))
-        scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        scp_process.wait()
-        while scp_process.returncode!=0:
-            pass
-        g_logger.info("scp ok,savehost:",save_host)
-        result_name = utils.ip2topic("/tasks") + "-" + task_id + ".zip"
+        # scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # scp_process.wait()
+        # while scp_process.returncode!=0:
+        #     pass
+        g_logger.info("cp ok,save :",save_result)
+        result_name = utils.docker2ip() + "-" + task_id + ".zip"
         task_result = utils.TaskResult(task.task_strategy,task_id,utils.TaskStatus.DONE.value, result_name)
         try:
             zk_client = KazooClient(utils.Env.zookeeper_hosts)
             zk_client.start()
-            zk_client.set("/result",str(task_result).encode('UTF-8'))
+            zk_client.set(utils.Env.zk_topic_result,str(task_result).encode('UTF-8'))
             zk_client.stop()
         except Exception as ex:
             print(ex)
@@ -150,14 +150,12 @@ class Consumer:
                 scan_ip = task.scan_ip
                 scan_province = task.scan_province
                 task_env = utils.Env.task_dir + str(task_id) + '/'
-                #if os.path.exists(task_env):
-                    #shutil.rmtree(task_env)
-                try:
-                    if os.path.exists(utils.Env.task_dir):
-                        shutil.rmtree(utils.Env.task_dir)
-                    os.makedirs(task_env)
-                except OSError as ex:
-                    print(ex)
+                # try:
+                #     if os.path.exists(utils.Env.task_dir):
+                #         shutil.rmtree(utils.Env.task_dir)
+                #     os.makedirs(task_env)
+                # except OSError as ex:
+                #     print(ex)
 
                 ip_file = task_env + 'white.txt'
                 if scan_ip is not None:
@@ -166,7 +164,7 @@ class Consumer:
                 else:
                     scan_nodes = task.scan_nodes
                     province_src = utils.Env.province_src + scan_province + ".txt"
-                    scan_targets = self.__get_target(province_src, len(scan_nodes), scan_nodes.index(utils.ip2topic("/tasks")))
+                    scan_targets = self.__get_target(province_src, len(scan_nodes), scan_nodes.index(utils.docker2ip()))
                     with open(ip_file,'w',encoding='UTF-8') as opener:
                         for target in scan_targets:
                             opener.write(target)
@@ -184,10 +182,10 @@ class Consumer:
                 task.task_status = utils.TaskStatus.DONE
                 task.task_process = None
                 self.__collect_results(task_env, task)
-                #try:
-                    #shutil.rmtree(task_env)
-                #except OSError:
-                    #print("can't delete dirs: %s" % task_env)
+                try:
+                    shutil.rmtree(task_env)
+                except OSError:
+                    print("can't delete dirs: %s" % task_env)
             except Exception as ex:
                 g_logger.info(ex)
 

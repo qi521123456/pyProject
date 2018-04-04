@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold,train_test_split
 from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.svm import SVC
@@ -18,6 +18,22 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
     f1 = 0.
     ap = 0.
     le = preprocessing.LabelEncoder()
+
+    pos_X = []
+    neg_X = []
+    pos_y = []
+    neg_y = []
+    for i, yi in enumerate(y):
+        if yi == 'Y':
+            pos_X.append(X[i])
+            pos_y.append(yi)
+        else:
+            neg_X.append(X[i])
+            neg_y.append(yi)
+    neg_X = np.array(neg_X)
+    pos_X = np.array(pos_X)
+    neg_y = np.array(neg_y)
+    pos_y = np.array(pos_y)
     for i in kf.split(X):
         X_train = X[i[0]]
         y_train = y[i[0]]
@@ -25,9 +41,16 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         y_test = y[i[1]]
         # print(np.sum(np.array(y_train)=='Y'))
         if np.sum(y_test=='Y')<1 or np.sum(np.array(y_train)=='Y')<1:
-            k_num -= 1
-            # print("no Y")
-            continue
+            # k_num -= 1
+            # continue
+            posNum = len(pos_y)
+            negNum = len(neg_y)
+            pnTex = (negNum-(K-1)*posNum)/(K+1)
+            X_train, X_test, y_train, y_test = train_test_split(neg_X, neg_y, test_size=pnTex/negNum)
+            X_train = np.concatenate([X_train,pos_X])
+            y_train = np.concatenate([y_train,pos_y])
+            X_test = np.concatenate([X_test,pos_X])
+            y_test = np.concatenate([y_test,pos_y])
 
         # print(np.sum(y_train=='Y'))
         if over_sampling is not None:
@@ -49,7 +72,7 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         # y_test = le.fit_transform(y_test)
         # pred = le.fit_transform(pred)
 
-        roc_auc += metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(pred),average="micro")
+        roc_auc += metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(pred),average="macro")
         # precision += metrics.precision_score(y_test,pred,average="micro")
         # recall += metrics.recall_score(y_test,pred,average='micro')
         # f1 += metrics.f1_score(y_test,pred,average="micro")
@@ -82,4 +105,4 @@ if __name__ == '__main__':
             X = np.array(d.get('X'))
             y = np.array(d.get('y'))
             # print( name,end='\t')
-            kfCV(X,y,over_sampling=ovs,clf=RandomForestClassifier())
+            kfCV(X,y,over_sampling=ovs)

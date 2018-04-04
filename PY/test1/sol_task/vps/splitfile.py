@@ -29,11 +29,19 @@ def writefile(filename):
     with open(filename,'w',encoding='UTF-8') as fw:
         for i in range(1,100001):
             fw.write(str(i)+'\n')
+
+
 if __name__ == '__main__':
     filename = 'D:/iptest.txt'
+    import os
+    import numpy as np
+    a = np.array([1,2,3])
+    b = np.array([1,2,3])
+    print()
     # writefile(filename)
     # starttime = datetime.datetime.now()
     # txt = get_target(filename,1,0)
     # endtime = datetime.datetime.now()
     # print(endtime-starttime)
     # print(txt)
+    #n你现在
