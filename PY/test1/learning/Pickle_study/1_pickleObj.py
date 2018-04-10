@@ -1,5 +1,7 @@
 import pickle
 
+
+
 class a:
     def __init__(self):
         self.t = 1
@@ -7,6 +9,7 @@ class a:
         self.r = 3
 
 class Task:
+    a = 1
     def __init__(self,):
         self.taskid = 101
         self.scantype = 'port'
@@ -16,12 +19,16 @@ class Task:
         self.white = '/home/lmqdcs/v2/w.txt'
 def te():
     q = pickle.dumps(Task())
-    print(q)
-    print(pickle.loads(q).__dict__)
+    ss = str(q)
+    print(type(ss))
+    print(pickle.loads(eval(ss)).__dict__)
 
 if __name__ == '__main__':
-    # import sys
-    # arg = sys.argv
+    import sys
+    arg = sys.argv
+    print(type(int(arg[1])))
     # p = pickle.loads(eval(arg[1]))
-    # print(p.w)
-    te()
+    # print(p.__dict__)
+    # te()
+    # Task.a = 2
+    # print(Task.a)

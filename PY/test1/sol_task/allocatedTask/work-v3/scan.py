@@ -1,9 +1,8 @@
 import os,sys
-import logging
-from enum import Enum
+import logging,logging.handlers
 import pickle
 
-# nohup docker run --env hostip="192.168.120.6" --env mac="02:42:f1:ce:03:eb" --env docker="docker1" -v /opt/scan/:/opt/scan znscan python3 /opt/scan/scan.py b'\x80\x03c__main__\nTask\nq\x00)\x81q\x01}q\x02(X\x08\x00\x00\x00scantypeq\x03X\x04\x00\x00\x00portq\x04X\x06\x00\x00\x00taskidq\x05KeX\x03\x00\x00\x00pctq\x06X\x00\x00\x00\x00q\x07X\x05\x00\x00\x00whiteq\x08X\x15\x00\x00\x00/home/lmqdcs/v2/w.txtq\tX\x06\x00\x00\x00scriptq\nh\x07h\x04KPub.' > /dev/null 2>&1 &
+# nohup docker run --env hostip="192.168.120.6" --env mac="02:42:f1:ce:03:eb" --env docker="docker1" -v /opt/scan/:/opt/scan znscan python3 /opt/scan/scan.py /home/lmqdcs/v2/pkl1.pkl > /dev/null 2>&1 &
 class Utils:
     @classmethod
     def localAddr(cls):
@@ -28,6 +27,10 @@ class Env:
     IP,MAC = Utils.localAddr()
     work_path = PATH+'/'+Docker+'/'
     result_path = PATH+'/result/'
+    if not os.path.exists(work_path):
+        os.makedirs(work_path)
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
     LocalIp = Docker+"@"+IP
     log = PATH+'/logs/'+Docker+'.log'
 class Logging:
@@ -37,7 +40,7 @@ class Logging:
         file_dir = path[:path.rfind('/')]
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
-        self.fhandler = logging.FileHandler(path)
+        self.fhandler = logging.handlers.RotatingFileHandler(path,maxBytes=1024*1024,backupCount=3)
         self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     def get_logger(self):
         self.logger.setLevel(logging.INFO)
@@ -49,7 +52,7 @@ class Logging:
 logger = Logging(Env.log).get_logger()
 class Task:
     def __init__(self,recv_task):
-        self.taskid = recv_task.task_id
+        self.taskid = recv_task.taskid
         self.scantype = recv_task.scantype
         self.port = recv_task.port
         self.script = recv_task.script
@@ -76,50 +79,53 @@ class Consume:
         cmd.append("-w")
         cmd.append(zwhite)
         os.system("/sbin/ldconfig")
-        return cmd
+        return " ".join(cmd)
     def __nmap_command(self, task,nwhite):
         cmd = ['nmap','-Pn','-'+task.pct,'--script',task.script,'-p',str(task.port),'-iL',nwhite,'-oX',Env.work_path+str(task.taskid)+"-"+Env.LocalIp+".xml"]
-        return cmd
+        return " ".join(cmd)
 
     def __zmap_zip(self, task,s_target):
-        task_id = str(task.taskid)
-        logger.info("zmap over id is '%s'" % task_id)
-        # s_target = task_env + task_id+"-"+Env.LocalIp+ ".txt"
-        d_target = Env.work_path + task_id + "-"+Env.LocalIp+".zip"
+        taskid = str(task.taskid)
+        logger.info("zmap over id is '%s'" % taskid)
+        # s_target = task_env + taskid+"-"+Env.LocalIp+ ".txt"
+        d_target = Env.work_path + taskid + "-"+Env.LocalIp+".zip"
         os.system("zip -j %s %s" % (d_target, s_target))
-        save_result = Env.result_path + task_id+ "-" + Env.LocalIp + ".zip"
+        save_result = Env.result_path + taskid+ "-" + Env.LocalIp + ".zip"
         os.system("cp %s %s" % (d_target, save_result))
-        logger.info("cp ok,save:", save_result)
+        logger.info("cp ok,save: %s" % save_result)
     def __nmap_zip(self,task):
-        task_id = str(task.taskid)
-        d_target = Env.work_path + task_id +"-"+Env.LocalIp+ ".zip"
+        taskid = str(task.taskid)
+        d_target = Env.work_path + taskid +"-"+Env.LocalIp+ ".zip"
         os.system("zip -j %s %s" % (d_target, (Env.work_path + "*.xml")))
-        save_result = Env.result_path + task_id + "-" + Env.LocalIp + ".zip"
+        save_result = Env.result_path + taskid + "-" + Env.LocalIp + ".zip"
         os.system("cp %s %s" % (d_target, save_result))
-        logger.info("cp ok,save:", save_result)
+        logger.info("cp ok,save: %s"% save_result)
     def consume(self):
         if self.task.scantype == 'port':
             targetfile = Env.work_path+'zres.txt'
             cmd = self.__zmap_command(self.task.port,targetfile,self.task.white)
-            logger.info("%s task running"%self.task.task_id)
+            logger.info("%s task running"%self.task.taskid)
             os.system(cmd)
             self.__zmap_zip(self.task,targetfile)
-            logger.info("%s task done" % self.task.task_id)
+            logger.info("%s task done" % self.task.taskid)
         elif self.task.scantype == 'protocol':
             tmpfile = Env.work_path + 'ztmp.txt'
             zcmd = self.__zmap_command(self.task.port, tmpfile, self.task.white)
-            logger.info("%s task zmap running" % self.task.task_id)
+            logger.info("%s task zmap running" % self.task.taskid)
             os.system(zcmd)
             ncmd = self.__nmap_command(self.task,tmpfile)
-            logger.info("%s task nmap running" % self.task.task_id)
+            logger.info("%s task nmap running" % self.task.taskid)
             os.system(ncmd)
             self.__nmap_zip(task)
-            logger.info("%s task done" % self.task.task_id)
+            logger.info("%s task done" % self.task.taskid)
         else:
             logger.error("wrong scan type")
 
 if __name__ == '__main__':
     args = sys.argv
-    task = Task(pickle.loads(eval(args[1])))
+    fr = open(args[1], 'rb')
+    pkl = pickle.load(fr)
+    task = Task(pkl)
+    fr.close()
     Consume(task).consume()
 
