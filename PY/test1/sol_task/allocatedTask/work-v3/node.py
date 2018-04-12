@@ -4,26 +4,34 @@ try:
     from kazoo.client import KazooClient
     import subprocess
     import threading
-    import os,shutil
-    import signal
+    import os,socket
     import logging,logging.handlers
     import time
     import psutil
+    import pickle
 except ImportError as IE:
     print(IE)
     exit()
 class Utils:
     @classmethod
-    def localAddr(cls):  #  TODO
+    def localAddr(cls):
         try:
-            c = os.popen("env|grep hostip")
-            s = c.read().split("=")
-            ip = s[1].strip()
-            mc = os.popen("env|grep mac")
-            mac = mc.read().split("=")[1].strip()
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('8.8.8.8', 80))
+            ip = s.getsockname()[0]
+            mac = ''
+            for k, v in psutil.net_if_addrs().items():
+                if k == 'docker0':
+                    for item in v:
+                        address = item[1]
+                        if len(address) == 17:
+                            mac = address
+                            break
         except:
             ip = '局域网地址ipv4'
             mac = 'docker0 mac地址'
+            print('can`t get ip and mac')
+            sys.exit(0)
         return str(ip),str(mac)
     @classmethod
     def localPath(cls):
@@ -33,10 +41,18 @@ class Env:
     PATH = Utils.localPath()
     IP,Docker0_MAC = Utils.localAddr()
     DockerNum = 5   # 默认最多5个docker同时运行，启动项目时可更改
+    DOCKER = 'scan:v2'
+    ZookeeperHost = '192.168.205.27'
+    task_topic = '/taskmgt/task'
+    result_topic = '/taskmgt/result'
+    node_topic = '/node/status'
+    province_src = PATH+'/province/'
     local_result_path = PATH+'/result/'
     if not os.path.exists(local_result_path):
         os.makedirs(local_result_path)
-    target_result_path = "" #  TODO
+    if not os.path.exists(province_src):
+        os.makedirs(province_src)
+    target_result_path = "root@192.168.120.30:/home/lmq"  #  TODO 需要ssh免密登录
     log = PATH+'/logs/node-'+IP+'.log'
 class Logging:
     def __init__(self,path):
@@ -56,19 +72,21 @@ class Logging:
         return self.logger
 g_logger = Logging(Env.log).get_logger()
 class Task:
-    def __init__(self,task_id, task_strategy, scan_ip, scan_province, scan_nodes, scan_port, protocol, scripts):
-        self.task_id = task_id
-        self.task_strategy = task_strategy
-        if scan_ip is "":
-            scan_ip = None
-        self.scan_ip = scan_ip
-        self.task_status = TaskStatus.INIT
-        self.task_process = None
-        self.scan_province = scan_province
-        self.scan_nodes = scan_nodes
-        self.scan_port = scan_port
-        self.protocol = protocol
-        self.scripts = scripts
+    def __init__(self,task_id, task_strategy, scan_ip, scan_province, scan_nodes, scan_port, protocol, script):
+        self.task_id = task_id  # str
+        self.task_strategy = task_strategy # str
+        if scan_ip == "":
+            self.scan_ip = None
+        else:
+            self.scan_ip = scan_ip # list []
+        self.scan_province = scan_province # str
+        self.scan_nodes = scan_nodes # list []
+        self.scan_port = scan_port # int | str
+        if scan_port is None:
+            self.scan_port = protocol.get('protocolPort')
+        self.protocol = protocol # dict {'protocolName':xxx,'portType':TCP|UDP}
+        self.script = script # bytes b'xxxxxxxx'
+
 class TaskPkl:
     def __init__(self,taskid,scantype,port,script,pct,white):
         self.taskid = taskid
@@ -78,130 +96,70 @@ class TaskPkl:
         self.pct = pct  # tcp or udp
         self.white = white
 class TaskResult:
-    def __init__(self,task_strategy,taskID,taskStatus,taskResult):
-        self.msg_type = "task_result"
-        self.task_strategy = task_strategy
+    def __init__(self,taskID,taskStatus,taskResult,message):
         self.task_id = str(taskID)
         self.task_status = str(taskStatus)
         self.result_name = str(taskResult)
-        self.node_ip = Env.IP
-
+        self.message = message
     def __str__(self):
-        #return "{'msgType':"+self.msg_type+",'taskID':"+self.task_id+",'taskStatus':"+self.task_status+"," \
-         #           "'taskResult':"+self.task_result+",'scanNode':"+self.node_ip+"}"
         return str(self.__dict__)
 class Docker:
-    def __init__(self,name,process):
+    def __init__(self,name,process,taskid):
         self.dockerName = name
         self.work_path = Env.PATH+'/'+name+'/'
         if not os.path.exists(self.work_path):
             os.makedirs(self.work_path)
         self.process = process
+        self.taskid = str(taskid)
 class NodeStatus:
     def __init__(self):
         time.sleep(0.5)
         self.msg_type = "node_status"
         self.nodeIP = Env.IP
+        self.docker_sum = Env.DockerNum
+        self.run_docker_num = len(TaskMgt.docker_list)
         self.nodeDetail = {
             'cpu': str(psutil.cpu_percent())+'%',
             'tStorage': str(psutil.disk_usage("/").total/(1024*1024)) + 'M',
             'uStorage': str(psutil.disk_usage("/").used/(1024*1024)) + 'M'
         }
-
     def __str__(self):
-        #return "{'msg_type':'%s','nodeIP':'%s','nodeDetail':%s}" % (self.msg_type,self.nodeIP,str(self.nodeDetail))
         return str(self.__dict__)
-
 
 class TaskStatus(Enum):
     INIT = "init"
     RUNNING = "running"
     DONE = "done"
-
-
 class Strategy(Enum):
     PORT = 'port_scan'
     PROTOCOL = 'protocol_sniffer'
 
-
-class ScanType(Enum):
-    IP = "ip_scan"
-    AREA = "area_scan"
 class TaskMgt:
-    """Class for managing tasks"""
     task_queue = Queue(maxsize=0)
-    task_list = list()
-    docker_list = list()
-    def create_task(self, task):
-        self.task_queue.put(task, block=True)
-        self.task_list.append(task)
-
-    def remove_task(self, task_id):
-        task_index = -1
-        for index, task in enumerate(self.task_list):
-            if task.task_id == task_id:
-                task_index = index
-                break
-        if task_index != -1:
-            self.task_list.pop(task_index)
-            g_logger.info("Task '%s' was removed" % task_id)
-        g_logger.warn("There is no task:'%s'" % task_id)
-
-    def get_tasks(self):
-        tasks = [task.task_id for task in self.task_list]
-        return tasks
-
-    def task_status(self, task_id):
-        for task in self.task_list:
-            if task.task_id == task_id:
-                return task.task_status.value
-        g_logger.warn("Task given task_id:'%s' not in task_list" % task_id)
-        return None
-
-    def set_task_status(self, task_id, task_status):
-        for task in self.task_list:
-            if task.task_id != task_id:
-                continue
-            task.task_status = task_status
-            break
-
-    def kill_running_task(self):
-        for task in self.task_list:
-            if task.task_process is not None:
-                 os.killpg(task.task_process.pid, signal.SIGUSR1)
-                 g_logger.info("Task id : '%s' was killed" % task.task_id)
-        g_logger.warn("There is no running task")
-
+    docker_list = set()
 
 class Consumer:
+    def __init__(self,taskmgt):
+        self.taskmgt = taskmgt
 
-    def __init_env(self):
-        if not os.path.exists(Env.task_dir):
-            try:
-                os.makedirs(Env.task_dir)
-            except OSError as ex:
-                print(ex)
-
-    def __get_command(self, task_env, task):
-        scan_script = Env.scan_script + "scan.py"
-        command = ["python3",scan_script]
-        task_type = ''
-        task_id = str(task.task_id)
-        if task.task_strategy == Strategy.PORT.value:
-            task_type = Strategy.PORT.value
-            command.append(task_type)
-            command.append(task_id)
-            command.append(task_env)
-            command.append(task.scan_port)
-        else:
-            task_type = Strategy.PROTOCOL.value
-            command.append(task_type)
-            command.append(task_id)
-            command.append(task_env)
-            command.append(str(task.protocol))
+    def __get_command(self, task_env,docker_name,pkl_file):
+        # docker run --env hostip=192.168.120.6 --env mac=02:42:11:46:a0:6d --env docker=docker2 -v /home/lmqdcs:/home/lmqdcs scan:v2 python3 /home/lmqdcs/v2/scan.py /home/lmqdcs/v2/pkl1.pkl
+        scan_script = Env.PATH + "/scan.py"
+        hostip = 'hostip=%s'%Env.IP
+        mac = 'mac=%s'%Env.Docker0_MAC
+        env_doc = 'docker=%s'%docker_name
+        share_path = '%s:%s'%(Env.PATH,Env.PATH)
+        command = ['docker','run','--env',hostip,'--env',mac,'--env',env_doc,'-v',share_path,Env.DOCKER,'python3',scan_script,pkl_file]
         return command
 
     def __get_target(self, file_name, factor, seq):
+        '''
+        省份扫描 ip分片
+        :param file_name:
+        :param factor:
+        :param seq:
+        :return:
+        '''
         with open(file_name,encoding='UTF-8') as f:
             lines = f.readlines()
         targets = []
@@ -214,163 +172,136 @@ class Consumer:
             pass
         return targets
 
-    def __collect_results(self, task_env, task):
-        task_id = str(task.task_id)
-        if task.task_strategy == Strategy.PORT.value:
-            s_target = task_env+task_id+".txt"
-            d_target = task_env+task_id+".zip"
-            os.system("zip -j %s %s" % (d_target, s_target))
-        else:
-            d_target = task_env+task_id+".zip"
-            os.system("zip -j %s %s" % (d_target, (task_env+"*.xml")))
-
-        scan_result = task_env + task_id + ".zip"
-        save_result = Env.master_target+ip2topic() + "-" + task_id + ".zip"
-        # save_host = "root@%s:%s" % (Env.master_ip,save_result)
-        os.system("cp %s %s" % (scan_result,save_result))
-        # os.system("scp %s %s" % (scan_result, save_host))
-        # scp_process = subprocess.Popen("scp %s %s" % (scan_result, save_host), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # scp_process.wait()
-        # while scp_process.returncode!=0:
-        #     pass
-        g_logger.info("cp ok,save :",save_result)
-        result_name = docker2ip() + "-" + task_id + ".zip"
-        task_result = TaskResult(task.task_strategy,task_id,TaskStatus.DONE.value, result_name)
-        try:
-            zk_client = KazooClient(Env.zookeeper_hosts)
-            zk_client.start()
-            zk_client.set(Env.zk_topic_result,str(task_result).encode('UTF-8'))
-            zk_client.stop()
-        except Exception as ex:
-            print(ex)
-
-
     def consume(self):
-        taskmgt = TaskMgt()
-        task_dir = Env.task_dir
-        self.__init_env()
-
+        taskmgt = self.taskmgt
         while True:
-            if taskmgt.task_queue.empty() is True:
+            if taskmgt.task_queue.empty() or len(taskmgt.docker_list) >= Env.DockerNum:
                 time.sleep(5)
                 continue
             try:
-                task = taskmgt.task_queue.get()
-                if not task in taskmgt.task_list:
+                docker_name = None
+                for i in range(1,Env.DockerNum+1):
+                    isinflag = False
+                    docker_name = "docker"+str(i)
+                    for run_doc in taskmgt.docker_list:
+                        if docker_name == run_doc.dockerName:
+                            isinflag = True
+                            break
+                    if not isinflag:
+                        break
+                if docker_name is None:
                     continue
-                print(task.__dict__)
-                task_id = str(task.task_id)
+                task = taskmgt.task_queue.get()
                 scan_ip = task.scan_ip
                 scan_province = task.scan_province
-                task_env = Env.task_dir + str(task_id) + '/'
-                # try:
-                #     if os.path.exists(Env.task_dir):
-                #         shutil.rmtree(Env.task_dir)
-                #     os.makedirs(task_env)
-                # except OSError as ex:
-                #     print(ex)
-
+                task_env = Env.PATH + '/'+docker_name + '/'
+                if not os.path.exists(task_env):
+                    os.makedirs(task_env)
                 ip_file = task_env + 'white.txt'
-                if scan_ip is not None:
-                    with open(ip_file, 'w',encoding='UTF-8') as opener:
-                        opener.writelines(scan_ip)
+                if scan_ip is not None and scan_ip != '':
+                    scan_targets = scan_ip
                 else:
                     scan_nodes = task.scan_nodes
-                    province_src = Env.province_src + scan_province + ".txt"
-                    scan_targets = self.__get_target(province_src, len(scan_nodes), scan_nodes.index(docker2ip()))
-                    with open(ip_file,'w',encoding='UTF-8') as opener:
-                        for target in scan_targets:
-                            opener.write(target)
-
+                    province_src = Env.province_src + scan_province + ".txt"  # 若扫描省份，一次只能扫一个
+                    scan_targets = self.__get_target(province_src, len(scan_nodes), scan_nodes.index(Env.IP))
+                with open(ip_file,'w',encoding='UTF-8') as opener:
+                    for target in scan_targets:
+                        opener.write(str(target).strip()+'\n')
+                scantype = None
+                script_file = ''
+                pct = ''
                 if task.task_strategy == Strategy.PROTOCOL.value:
-                    for index in range(len(task.protocol)):
-                        script_name = task.protocol[index].get('protocolName') + ".nse"
-                        with open(task_env+script_name,'w+',encoding='UTF-8') as writer:
-                            writer.write(task.scripts[index])
-                cmd = self.__get_command(task_env,task)
+                    scantype = 'protocol'
+                    script_file = task_env + task.protocol.get('protocolName') + ".nse"
+                    if task.protocol.get('portType') == 'TCP':
+                        pct = 'sS'
+                    else:
+                        pct = 'sU'
+                    with open(script_file, 'w', encoding='UTF-8') as writer:
+                        writer.write(task.script)
+                elif task.task_strategy == Strategy.PORT.value:
+                    scantype = 'port'
+                pkl_file = task_env+'.task.pkl'
+                task_pkl = TaskPkl(task.task_id,scantype,task.scan_port,script_file,pct,ip_file)
+                with open(pkl_file,'wb') as fw:
+                    pickle.dump(task_pkl,fw)
+                cmd = self.__get_command(task_env,docker_name,pkl_file)
+                g_logger.info('begin task: %s, %s'%(task.task_id," ".join(cmd)))
                 child = subprocess.Popen(cmd, close_fds=True, preexec_fn=os.setpgrp)
-                task.task_process = child
-
-                task.task_status = TaskStatus.RUNNING
-                task.task_process.communicate()
-                task.task_status = TaskStatus.DONE
-                task.task_process = None
-                self.__collect_results(task_env, task)
-                try:
-                    shutil.rmtree(task_env)
-                except OSError:
-                    print("can't delete dirs: %s" % task_env)
+                taskmgt.docker_list.add(Docker(docker_name,child,task.task_id))
             except Exception as ex:
                 g_logger.info(ex)
-
-
-class NodeMgte:
-    def __init__(self):
-        zk_client = KazooClient(hosts=Env.zookeeper_hosts)
-        self.zk = zk_client
-
-    def node_status(self):
-        g_logger.info("NodeMgte: node_status")
-        #while True:
-        node_status = NodeStatus()
-        self.zk.start()
-        self.zk.set("/nodeStatus",str(node_status).encode())
-        self.zk.stop()
-
 
 class Monitor:
     def __init__(self,taskmgt):
         self.taskmgt = taskmgt
-
     def __scheduler(self, message):
         try:
-            msg_type = message.get('msgType')
-            if msg_type is None:
-                return
-            if msg_type == 'taskMsg':
-                task = Task(message.get('taskId'), message.get('scanStrategy'), message.get('scanIp'), message.get('province'), message.get('scanNodes'), message.get('scanPort'), message.get('protocol'), message.get('script'))
-                # print(task)
-                self.taskmgt.create_task(task)
 
-            else:
-                pass
+            task = Task(message.get('taskId'), message.get('scanStrategy'), message.get('scanIp'),
+                        message.get('province'), message.get('scanNodes'), message.get('scanPort'),
+                        message.get('protocol'), message.get('script'))
+            self.taskmgt.task_queue.put(task)
+
         except Exception as ex:
-            g_logger.info(ex)
+            g_logger.error(ex)
+            return
     def docker_moniter(self):
         '''
-        更新docker——list状态
+        更新docker——list状态,并收集扫描结果scp至主节点
         :return:
         '''
         while True:
             if len(self.taskmgt.docker_list)>0:
-                for run_docker in self.taskmgt.docker_list:
-                    run_docker.pull()  # 不能少
-                    if run_docker.process.returncode==0:
+                for run_docker in list(self.taskmgt.docker_list):  # 必要转换
+                    run_docker.process.poll()  # 不能少
+                    zip_file_name = run_docker.taskid + '-' + run_docker.dockerName + '@' + Env.IP
+                    if run_docker.process.returncode == 0:
                         self.taskmgt.docker_list.remove(run_docker)
+                        g_logger.info('task : %s is over' % run_docker.taskid)
+                        scp_cmd = 'scp %s %s'%(Env.local_result_path+zip_file_name+'.zip',Env.target_result_path)
+                        try:
+                            os.system(scp_cmd)
+                            g_logger.info('scp over : %s' % scp_cmd)
+                            os.system("rm -f %s" % Env.local_result_path+zip_file_name+'.zip')
+                            task_res = TaskResult(run_docker.taskid,TaskStatus.DONE.value,zip_file_name,'success')
+                        except Exception as e:
+                            g_logger.error('scp error : %s ' % scp_cmd)
+                            g_logger.error(e)
+                            task_res = TaskResult(run_docker.taskid, TaskStatus.DONE.value, zip_file_name, 'error:scp wrong')
+                    else:
+                        task_res = TaskResult(run_docker.taskid, TaskStatus.RUNNING.value, zip_file_name, 'success')
+                    zk_client.set(Env.result_topic,str(task_res).encode())
+                    time.sleep(1)
             time.sleep(1)
-
+    def node_status(self):
+        while True:
+            time.sleep(5)
+            node_status = NodeStatus()
+            zk_client.set(Env.node_topic,str(node_status).encode())
     def monitor(self):
-        thread_consumer = threading.Thread(target=Consumer().consume)
+        thread_consumer = threading.Thread(target=Consumer(self.taskmgt).consume)
         thread_docker = threading.Thread(target=self.docker_moniter)
-        thread_producer = threading.Thread(target=NodeMgte().node_status)
+        thread_node = threading.Thread(target=self.node_status)
         thread_consumer.start()
         thread_docker.start()
-        zk_hosts = Env.zookeeper_hosts
+        thread_node.start()
         try:
-            zk_client = KazooClient(hosts=zk_hosts)
-            zk_client.start()
-            @zk_client.DataWatch("/tasks")
+            @zk_client.DataWatch(Env.task_topic)
             def watch_task(data, stat):
-                msg_value = eval(data.decode())
-                if (type(msg_value) is dict) and (msg_value.get('msgType') == 'taskMsg') and (ip2topic("/tasks") in msg_value.get('scanNodes')):
-                    self.__scheduler(msg_value)
-                else:
+                try:
+                    msg_value = eval(data.decode())
+                    if (type(msg_value) is dict) and (msg_value.get('msgType') == 'taskMsg') and (
+                        Env.IP in msg_value.get('scanNodes')):
+                        self.__scheduler(msg_value)
+                    else:
+                        return
+                except:
                     return
             while True:
                 time.sleep(1800)
-            zk_client.stop()
         except Exception as ex:
-            print(ex)
+            g_logger.error(ex)
 
 
 
@@ -382,5 +313,12 @@ if __name__ == "__main__":
             Env.DockerNum=int(args[1])
         except:
             pass
+    global zk_client
+    try:
+        zk_client = KazooClient(hosts=Env.ZookeeperHost)
+        zk_client.start()
+    except:
+        print('can`t connect to zookeeper %s, try again'%Env.ZookeeperHost)
+        sys.exit(0)
     taskMgte = TaskMgt()
     Monitor(taskMgte).monitor()

@@ -3,6 +3,7 @@ import logging,logging.handlers
 import pickle
 
 # nohup docker run --env hostip="192.168.120.6" --env mac="02:42:f1:ce:03:eb" --env docker="docker1" -v /opt/scan/:/opt/scan znscan python3 /opt/scan/scan.py /home/lmqdcs/v2/pkl1.pkl > /dev/null 2>&1 &
+# docker run --env hostip="192.168.120.6" --env mac="02:42:11:46:a0:6d" --env docker="docker2" -v /home/lmqdcs:/home/lmqdcs scan:v2 python3 /home/lmqdcs/v2/scan.py /home/lmqdcs/v2/pkl1.pkl
 class Utils:
     @classmethod
     def localAddr(cls):
@@ -21,7 +22,7 @@ class Utils:
         path = os.path.split(os.path.realpath(__file__))[0]
         doc = os.popen("env|grep docker")
         docker = doc.read().split("=")[1].strip()
-        return path,docker
+        return path,str(docker)
 class Env:
     PATH,Docker = Utils.localPath()
     IP,MAC = Utils.localAddr()
@@ -50,7 +51,7 @@ class Logging:
         self.logger.addHandler(self.fhandler)
         return self.logger
 logger = Logging(Env.log).get_logger()
-class Task:
+class TaskPkl:
     def __init__(self,recv_task):
         self.taskid = recv_task.taskid
         self.scantype = recv_task.scantype
@@ -91,15 +92,15 @@ class Consume:
         d_target = Env.work_path + taskid + "-"+Env.LocalIp+".zip"
         os.system("zip -j %s %s" % (d_target, s_target))
         save_result = Env.result_path + taskid+ "-" + Env.LocalIp + ".zip"
-        os.system("cp %s %s" % (d_target, save_result))
-        logger.info("cp ok,save: %s" % save_result)
+        os.system("mv %s %s" % (d_target, save_result))
+        logger.info("mv ok,save: %s" % save_result)
     def __nmap_zip(self,task):
         taskid = str(task.taskid)
         d_target = Env.work_path + taskid +"-"+Env.LocalIp+ ".zip"
         os.system("zip -j %s %s" % (d_target, (Env.work_path + "*.xml")))
         save_result = Env.result_path + taskid + "-" + Env.LocalIp + ".zip"
-        os.system("cp %s %s" % (d_target, save_result))
-        logger.info("cp ok,save: %s"% save_result)
+        os.system("mv %s %s" % (d_target, save_result))
+        logger.info("mv ok,save: %s"% save_result)
     def consume(self):
         if self.task.scantype == 'port':
             targetfile = Env.work_path+'zres.txt'
@@ -120,12 +121,14 @@ class Consume:
             logger.info("%s task done" % self.task.taskid)
         else:
             logger.error("wrong scan type")
+        os.system("rm -rf %s*"%Env.work_path)
+        logger.info("clear work path : %s" % Env.work_path)
 
 if __name__ == '__main__':
     args = sys.argv
     fr = open(args[1], 'rb')
     pkl = pickle.load(fr)
-    task = Task(pkl)
+    task = TaskPkl(pkl)
     fr.close()
     Consume(task).consume()
 
