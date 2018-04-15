@@ -113,7 +113,6 @@ class Docker:
         self.taskid = str(taskid)
 class NodeStatus:
     def __init__(self):
-        time.sleep(0.5)
         self.msg_type = "node_status"
         self.nodeIP = Env.IP
         self.docker_sum = Env.DockerNum
@@ -251,6 +250,7 @@ class Monitor:
         更新docker——list状态,并收集扫描结果scp至主节点
         :return:
         '''
+        zk_client.set(Env.result_topic, str("{'message':'flush'}").encode())
         while True:
             if len(self.taskmgt.docker_list)>0:
                 for run_docker in list(self.taskmgt.docker_list):  # 必要转换
@@ -272,6 +272,7 @@ class Monitor:
                     else:
                         task_res = TaskResult(run_docker.taskid, TaskStatus.RUNNING.value, zip_file_name, 'success')
                     zk_client.set(Env.result_topic,str(task_res).encode())
+                    zk_client.set(Env.result_topic, str("{'message':'flush'}").encode())
                     time.sleep(1)
             time.sleep(1)
     def node_status(self):
