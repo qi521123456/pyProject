@@ -140,14 +140,21 @@ class Monitor:
                 time.sleep(1800)
         except Exception as e:
             logger.error(e)
+def test():
+    print("is done 384",imysql.isTaskDone(384))
+    print("status 384",imysql.selectTaskStstus(384))
+    imysql.updateDetailStatus(384,'192.168.120.6',1,2)
+    imysql.updateTaskById(384,2)
+    imysql.updateNodeStatus(['123'])
 if __name__ == '__main__':
     global imysql
     imysql = Imysql()
     global zk_client
-    try:
-        zk_client = KazooClient(hosts=Env.ZookeeperHost)
-        zk_client.start()
-    except:
-        print('can`t connect to zookeeper %s, try again' % Env.ZookeeperHost)
-        sys.exit(0)
+    # try:
+    #     zk_client = KazooClient(hosts=Env.ZookeeperHost)
+    #     zk_client.start()
+    # except:
+    #     print('can`t connect to zookeeper %s, try again' % Env.ZookeeperHost)
+    #     sys.exit(0)
     # Monitor().resultWatcher()
+    test()
