@@ -286,7 +286,7 @@ class Monitor:
         thread_node = threading.Thread(target=self.node_status)
         thread_consumer.start()
         thread_docker.start()
-        thread_node.start()
+        # thread_node.start()
         try:
             @zk_client.DataWatch(Env.task_topic)
             def watch_task(data, stat):
@@ -318,6 +318,7 @@ if __name__ == "__main__":
     try:
         zk_client = KazooClient(hosts=Env.ZookeeperHost)
         zk_client.start()
+        zk_client.create(Env.node_topic+'/'+Env.IP,value=b'online',ephemeral=True)
     except:
         print('can`t connect to zookeeper %s, try again'%Env.ZookeeperHost)
         sys.exit(0)
