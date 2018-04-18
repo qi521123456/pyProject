@@ -6,7 +6,7 @@ from kazoo.client import KazooClient
 
 class Env:
     PATH = os.path.split(os.path.realpath(__file__))[0]
-    ZookeeperHost = '192.168.205.27'
+    ZookeeperHost = '192.168.205.27:2181'
     result_topic = '/taskmgt/result'
     node_topic = '/node/status'
     log = PATH+'/solServer.log'
@@ -67,13 +67,17 @@ class Imysql:
             cur.execute(q_sql)
             status = cur.fetchone()[0]
         return status
-    def updateDetailStatus(self,taskId,nodeIp,index,status):
+    def updateDetailStatus(self,taskId,nodeIp,index,status,resultName=None):
         q_sql = 'SELECT id FROM node WHERE node_ip="%s"'%nodeIp
         with self.conn.cursor() as cur:
             cur.execute(q_sql)
             nodeId = cur.fetchone()[0]
-            u_sql = 'UPDATE `task_detail` SET `task_status`=%s WHERE `task_id`=%s and ' \
-                'node_id=%s and task_detail_index=%s'%(status,taskId,nodeId,index)
+            if resultName:
+                u_sql = 'UPDATE `task_detail` SET `task_status`=%s,file_location="%s" WHERE `task_id`=%s and ' \
+                        'node_id=%s and task_detail_index=%s' % (status, resultName,taskId, nodeId, index)
+            else:
+                u_sql = 'UPDATE `task_detail` SET `task_status`=%s WHERE `task_id`=%s and ' \
+                    'node_id=%s and task_detail_index=%s'%(status,taskId,nodeId,index)
             cur.execute(u_sql)
         self.conn.commit()
     def updateNodeStatus(self,nodeIps):
@@ -98,6 +102,7 @@ class Monitor:
         thread_node = threading.Thread(target=self.nodeWatcher)
         thread_node.start()
         try:
+            imysql = Imysql()
             @zk_client.DataWatch(Env.result_topic)
             def watch_task(data, stat):
                 try:
@@ -122,7 +127,7 @@ class Monitor:
                                 imysql.updateTaskById(taskId,1)
                                 logger.info('task %s is running'%taskId)
                         elif status == 'done':
-                            imysql.updateDetailStatus(taskId,nodeIp,detailIndex,2)
+                            imysql.updateDetailStatus(taskId,nodeIp,detailIndex,2,result['result_name'])
                             if imysql.isTaskDone(taskId):
                                 imysql.updateTaskById(taskId,2)
                                 logger.info('task %s is done'%taskId)
@@ -137,24 +142,21 @@ class Monitor:
         except Exception as ex:
             logger.error(ex)
     def nodeWatcher(self):
+
         try:
+            imysql = Imysql()
             @zk_client.ChildrenWatch(Env.node_topic)
             def node_watch(chindren):
-                imysql.updateNodeStatus(chindren)
                 print(chindren)
+                imysql.updateNodeStatus(chindren)
+
             while True:
                 time.sleep(1800)
         except Exception as e:
             logger.error(e)
-def test():
-    print("is done 384",imysql.isTaskDone(185))
-    print("status 384",imysql.selectTaskStstus(185))
-    imysql.updateDetailStatus(185,'45.32.172.82',1,2)
-    imysql.updateTaskById(185,2)
-    imysql.updateNodeStatus(['123'])
+
 if __name__ == '__main__':
-    global imysql
-    imysql = Imysql()
+
     global zk_client
     try:
         zk_client = KazooClient(hosts=Env.ZookeeperHost)
@@ -163,4 +165,3 @@ if __name__ == '__main__':
         print('can`t connect to zookeeper %s, try again' % Env.ZookeeperHost)
         sys.exit(0)
     Monitor().resultWatcher()
-    #test()
