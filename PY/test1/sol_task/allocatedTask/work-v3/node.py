@@ -111,6 +111,7 @@ class Docker:
             os.makedirs(self.work_path)
         self.process = process
         self.taskid = str(taskid)
+        self.send_flag = False
 class NodeStatus:
     def __init__(self):
         self.msg_type = "node_status"
@@ -269,10 +270,14 @@ class Monitor:
                             g_logger.error('scp error : %s ' % scp_cmd)
                             g_logger.error(e)
                             task_res = TaskResult(run_docker.taskid, TaskStatus.DONE.value, zip_file_name, 'error:scp wrong')
+                        zk_client.set(Env.result_topic, str(task_res).encode())
                     else:
-                        task_res = TaskResult(run_docker.taskid, TaskStatus.RUNNING.value, zip_file_name, 'success')
-                    zk_client.set(Env.result_topic,str(task_res).encode())
-                    zk_client.set(Env.result_topic, str("{'message':'flush'}").encode())
+                        if not run_docker.send_flag:
+                            print("running ")
+                            task_res = TaskResult(run_docker.taskid, TaskStatus.RUNNING.value, zip_file_name, 'success')
+                            zk_client.set(Env.result_topic,str(task_res).encode())
+                            run_docker.send_flag = True
+                    # zk_client.set(Env.result_topic, str("{'message':'flush'}").encode())
                     time.sleep(1)
             time.sleep(1)
     def node_status(self):

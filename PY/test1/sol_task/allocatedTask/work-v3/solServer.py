@@ -11,10 +11,10 @@ class Env:
     node_topic = '/node/status'
     log = PATH+'/solServer.log'
 
-    MysqlHost = 'localhost'
+    MysqlHost = '192.168.120.188'
     MysqlPort = 3306
-    MysqlUser = 'root'
-    MysqlPwd = '123456'
+    MysqlUser = 'sol'
+    MysqlPwd = 'SolWi11'
     MysqlDB = 'sol_daily'
 class Logging:
     def __init__(self,path):
@@ -56,8 +56,9 @@ class Imysql:
         with self.conn.cursor() as cur:
             cur.execute(q_sql)
             statuss = cur.fetchall()
+            print(statuss)
         for i in statuss:
-            if i!=2:
+            if i[0]!=2:
                 return False
         return True
     def selectTaskStstus(self,taskId):
@@ -80,15 +81,14 @@ class Imysql:
             allIp_sql = 'SELECT node_ip FROM node'
             cur.execute(allIp_sql)
             allIps = cur.fetchall()
-            print(allIps)
             for ip in allIps:
-                if ip in nodeIps:
-                    u_sql = 'UPDATE node SET node_status=1 WHERE node_ip="%s" and node_status=0'% ip
+                if ip[0] in nodeIps:
+                    u_sql = 'UPDATE node SET node_status=1 WHERE node_ip="%s" and node_status=0'% ip[0]
                 else:
-                    u_sql = 'UPDATE node SET node_status=0 WHERE node_ip="%s" and node_status=1'% ip
+                    u_sql = 'UPDATE node SET node_status=0 WHERE node_ip="%s" and node_status=1'% ip[0]
                 print(u_sql)
                 cur.execute(u_sql)
-        self.conn.commit()
+                self.conn.commit()
     def __del__(self):
         self.conn.close()
 
@@ -102,6 +102,7 @@ class Monitor:
             def watch_task(data, stat):
                 try:
                     result = eval(data.decode())
+                    print(result)
                     if (type(result) is dict) and result['message']=='success':
                         names = result['result_name'].split('-')
                         status = result.get('task_status')
@@ -115,18 +116,20 @@ class Monitor:
                             nodeIp = names[1].split('@')[1]
                         else:
                             return
-                        if  status == 'running':
+                        if status == 'running':
                             imysql.updateDetailStatus(taskId,nodeIp,detailIndex,1)
                             if imysql.selectTaskStstus(taskId)==0:
                                 imysql.updateTaskById(taskId,1)
+                                logger.info('task %s is running'%taskId)
                         elif status == 'done':
                             imysql.updateDetailStatus(taskId,nodeIp,detailIndex,2)
                             if imysql.isTaskDone(taskId):
                                 imysql.updateTaskById(taskId,2)
+                                logger.info('task %s is done'%taskId)
                         else:
                             pass
                     else:
-                        logger.error('message incorrect')
+                        logger.info('message not success : %s'%result)
                 except:
                     return
             while True:
@@ -135,10 +138,10 @@ class Monitor:
             logger.error(ex)
     def nodeWatcher(self):
         try:
-            @zk_client.ChildrenWatch
+            @zk_client.ChildrenWatch(Env.node_topic)
             def node_watch(chindren):
                 imysql.updateNodeStatus(chindren)
-
+                print(chindren)
             while True:
                 time.sleep(1800)
         except Exception as e:
@@ -153,11 +156,11 @@ if __name__ == '__main__':
     global imysql
     imysql = Imysql()
     global zk_client
-    # try:
-    #     zk_client = KazooClient(hosts=Env.ZookeeperHost)
-    #     zk_client.start()
-    # except:
-    #     print('can`t connect to zookeeper %s, try again' % Env.ZookeeperHost)
-    #     sys.exit(0)
-    # Monitor().resultWatcher()
-    test()
+    try:
+        zk_client = KazooClient(hosts=Env.ZookeeperHost)
+        zk_client.start()
+    except:
+        print('can`t connect to zookeeper %s, try again' % Env.ZookeeperHost)
+        sys.exit(0)
+    Monitor().resultWatcher()
+    #test()
