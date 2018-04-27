@@ -41,8 +41,8 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         y_test = y[i[1]]
         # print(np.sum(np.array(y_train)=='Y'))
         if np.sum(y_test=='Y')<1 or np.sum(np.array(y_train)=='Y')<1:
-            # k_num -= 1
-            # continue
+            k_num -= 1
+            continue
             posNum = len(pos_y)
             negNum = len(neg_y)
             pnTex = (negNum-(K-1)*posNum)/(K+1)
@@ -92,17 +92,21 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
 if __name__ == '__main__':
     from NASAMDPSDPdata import AllData
     from sklearn.naive_bayes import GaussianNB
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.naive_bayes import BernoulliNB
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.ensemble import RandomForestClassifier
     data = AllData()
-    for ovs in [RandomOverSampler, SMOTE, ADASYN, myOverSampling, SMOTETomek, SMOTEENN]:
-        # if ovs in [RandomOverSampler,SMOTE]:
-        #     continue
-        print(ovs.__name__)
+    for clf in [MultinomialNB(),BernoulliNB()]:
+        print(clf.__class__)
+        for ovs in [RandomOverSampler, SMOTE, ADASYN, myOverSampling, SMOTETomek, SMOTEENN]:
+            # if ovs in [RandomOverSampler,SMOTE]:
+            #     continue
+            print(ovs.__name__)
 
-        for d in data:
-            name = d.get('name')
-            X = np.array(d.get('X'))
-            y = np.array(d.get('y'))
-            # print( name,end='\t')
-            kfCV(X,y,over_sampling=ovs)
+            for d in data:
+                name = d.get('name')
+                X = np.array(d.get('X'))
+                y = np.array(d.get('y'))
+                # print( name,end='\t')
+                kfCV(X,y,over_sampling=ovs,clf=clf)
