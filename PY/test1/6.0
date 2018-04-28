@@ -1,0 +1,2 @@
+Requirement already satisfied: elasticsearch in d:\software\python\lib\site-packages
+Requirement already satisfied: urllib3<2.0,>=1.8 in d:\software\python\lib\site-packages (from elasticsearch)

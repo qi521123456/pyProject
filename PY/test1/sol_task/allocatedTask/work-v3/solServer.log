@@ -1,0 +1,430 @@
+2018-04-17 22:47:30,820 - root - ERROR - updateTask :(1054, "Unknown column 'task_id' in 'where clause'")
+2018-04-17 22:51:41,637 - root - ERROR - updateTask :(1054, "Unknown column '2' in 'field list'")
+2018-04-17 22:52:48,566 - root - ERROR - updateTask :(1054, "Unknown column '2' in 'field list'")
+2018-04-18 08:18:15,266 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:18:15,324 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:19:40,534 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:19:40,782 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:25:54,180 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:25:54,415 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:26:49,397 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:26:49,616 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:27:00,930 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:27:01,139 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:27:14,221 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:27:14,437 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 08:30:19,069 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 08:30:19,145 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 09:50:32,274 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 09:50:32,521 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 09:50:32,522 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 09:50:42,757 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 09:54:20,589 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 09:54:20,634 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 09:54:20,636 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 09:58:36,252 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 09:58:36,521 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 09:58:36,524 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 09:59:09,513 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 09:59:09,609 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 09:59:09,611 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 10:00:01,777 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 10:00:56,923 - root - INFO - task 388 is running
+2018-04-18 10:01:12,160 - root - INFO - task 388 is done
+2018-04-18 10:13:56,725 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 10:13:56,769 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 10:13:56,771 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 10:25:45,258 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 10:27:18,491 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 10:27:23,594 - root - INFO - task 390 is running
+2018-04-18 10:27:51,134 - root - INFO - task 390 is done
+2018-04-18 10:29:31,712 - root - INFO - task 391 is done
+2018-04-18 10:30:43,823 - root - INFO - task 392 is running
+2018-04-18 10:31:25,904 - root - INFO - task 392 is done
+2018-04-18 10:44:54,727 - root - INFO - task 393 is running
+2018-04-18 10:45:16,832 - root - INFO - task 393 is done
+2018-04-18 10:54:32,418 - root - INFO - task 394 is done
+2018-04-18 11:20:52,221 - root - INFO - task 395 is running
+2018-04-18 11:21:34,957 - root - INFO - task 395 is done
+2018-04-18 11:22:32,064 - root - INFO - task 396 is running
+2018-04-18 11:22:51,036 - root - INFO - task 396 is done
+2018-04-18 11:30:29,143 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:30:29,229 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:30:29,232 - kazoo.recipe.watchers - ERROR - Protocol error, expecting EOF
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 147, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1371, in _read_result_packet
+    self._get_descriptions()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1472, in _get_descriptions
+    assert eof_packet.is_eof_packet(), 'Protocol error, expecting EOF'
+AssertionError: Protocol error, expecting EOF
+2018-04-18 11:30:29,247 - root - ERROR - Protocol error, expecting EOF
+2018-04-18 11:32:23,079 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:32:23,131 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:32:23,134 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 102 expected 2
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 147, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1371, in _read_result_packet
+    self._get_descriptions()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1442, in _get_descriptions
+    field = self.connection._read_packet(FieldDescriptorPacket)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:32:23,136 - root - ERROR - Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:34:20,773 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:34:20,909 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:34:20,912 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 102 expected 2
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 147, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1371, in _read_result_packet
+    self._get_descriptions()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1442, in _get_descriptions
+    field = self.connection._read_packet(FieldDescriptorPacket)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:34:20,915 - root - ERROR - Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:36:00,632 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:36:00,852 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:36:00,854 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 102 expected 2
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 147, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1371, in _read_result_packet
+    self._get_descriptions()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1442, in _get_descriptions
+    field = self.connection._read_packet(FieldDescriptorPacket)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:36:00,856 - root - ERROR - Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:38:37,547 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:38:37,613 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:38:37,617 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 0 expected 2
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 147, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 94, in updateNodeStatus
+    cur.execute(u_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1302, in read
+    first_packet = self.connection._read_packet()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 0 expected 2
+2018-04-18 11:38:37,620 - root - ERROR - Packet sequence number wrong - got 0 expected 2
+2018-04-18 11:38:54,778 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:38:54,974 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:38:54,978 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 1 expected 6
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 148, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1372, in _read_result_packet
+    self._read_rowdata_packet()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1406, in _read_rowdata_packet
+    packet = self.connection._read_packet()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 1 expected 6
+2018-04-18 11:38:54,980 - root - ERROR - Packet sequence number wrong - got 1 expected 6
+2018-04-18 11:40:40,432 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:40:40,492 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:40:40,495 - kazoo.recipe.watchers - ERROR - Packet sequence number wrong - got 102 expected 2
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 148, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 835, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1019, in _read_query_result
+    result.read()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1309, in read
+    self._read_result_packet(first_packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1371, in _read_result_packet
+    self._get_descriptions()
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1442, in _get_descriptions
+    field = self.connection._read_packet(FieldDescriptorPacket)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 968, in _read_packet
+    (packet_number, self._next_seq_id))
+pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:40:40,497 - root - ERROR - Packet sequence number wrong - got 102 expected 2
+2018-04-18 11:45:13,296 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-18 11:45:13,355 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-18 11:45:13,376 - root - INFO - task 396 is done
+2018-04-18 11:45:46,337 - root - INFO - message not success : {'message': 'flush'}
+2018-04-18 11:46:16,422 - root - INFO - task 397 is running
+2018-04-18 11:46:29,066 - root - INFO - task 397 is done
+2018-04-18 11:48:17,233 - root - INFO - task 398 is running
+2018-04-18 11:48:41,080 - root - INFO - task 398 is done
+2018-04-18 15:14:37,323 - root - INFO - task 399 is running
+2018-04-18 15:14:53,071 - root - INFO - task 400 is running
+2018-04-18 15:15:05,047 - root - INFO - task 399 is done
+2018-04-18 15:15:15,512 - root - INFO - task 400 is done
+2018-04-18 15:21:32,704 - root - INFO - task 401 is running
+2018-04-18 15:22:00,054 - root - INFO - task 401 is done
+2018-04-18 15:28:21,998 - root - INFO - task 402 is running
+2018-04-18 15:28:22,014 - root - INFO - task 402 is done
+2018-04-18 15:31:16,119 - root - INFO - task 403 is done
+2018-04-18 15:54:18,378 - root - INFO - task 404 is running
+2018-04-18 15:54:42,378 - root - INFO - task 404 is done
+2018-04-18 16:23:45,184 - root - INFO - task 405 is running
+2018-04-18 16:24:30,565 - root - INFO - task 405 is done
+2018-04-18 16:50:11,058 - root - INFO - task 406 is running
+2018-04-18 16:50:43,604 - root - INFO - task 406 is done
+2018-04-18 16:52:31,775 - root - INFO - task 407 is running
+2018-04-18 16:53:09,048 - root - INFO - task 407 is done
+2018-04-18 16:57:11,349 - root - INFO - task 408 is running
+2018-04-18 16:58:11,630 - root - INFO - task 408 is done
+2018-04-18 17:38:34,246 - root - INFO - task 410 is running
+2018-04-18 17:39:07,277 - root - INFO - task 410 is done
+2018-04-18 18:07:34,975 - root - INFO - task 411 is running
+2018-04-18 18:08:08,350 - root - INFO - task 411 is done
+2018-04-18 18:15:35,842 - root - INFO - task 412 is running
+2018-04-18 18:16:10,291 - root - INFO - task 412 is done
+2018-04-18 18:21:05,655 - root - INFO - task 413 is running
+2018-04-18 18:21:35,361 - root - INFO - task 413 is done
+2018-04-18 18:22:10,469 - root - INFO - task 414 is running
+2018-04-18 18:22:12,997 - root - INFO - task 414 is done
+2018-04-18 18:23:16,121 - root - INFO - task 415 is running
+2018-04-18 18:24:31,225 - root - INFO - task 416 is running
+2018-04-18 18:25:14,598 - root - INFO - task 416 is done
+2018-04-18 18:28:50,868 - root - INFO - task 417 is running
+2018-04-18 18:29:07,024 - root - INFO - task 417 is done
+2018-04-19 09:00:15,773 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 09:00:15,946 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-19 09:00:57,500 - root - INFO - task 420 is running
+2018-04-19 09:01:14,025 - root - INFO - task 420 is done
+2018-04-19 09:03:27,247 - root - INFO - task 421 is running
+2018-04-19 09:03:46,817 - root - INFO - task 421 is done
+2018-04-19 09:08:48,168 - root - INFO - task 422 is running
+2018-04-19 09:09:25,643 - root - INFO - task 422 is done
+2018-04-19 09:10:57,883 - root - INFO - task 423 is running
+2018-04-19 09:11:13,917 - root - INFO - task 423 is done
+2018-04-19 09:12:43,068 - root - INFO - task 424 is running
+2018-04-19 09:19:49,605 - root - INFO - task 425 is running
+2018-04-19 10:27:33,011 - root - INFO - message not success : {'message': 'flush'}
+2018-04-19 10:28:15,711 - root - INFO - task 425 is done
+2018-04-19 10:30:18,888 - root - INFO - task 426 is running
+2018-04-19 10:30:48,880 - root - INFO - task 426 is done
+2018-04-19 11:13:40,449 - root - INFO - task 427 is running
+2018-04-19 11:14:04,541 - root - INFO - task 427 is done
+2018-04-19 16:19:30,811 - kazoo.client - WARNING - Connection dropped: socket connection error: 远程主机强迫关闭了一个现有的连接。
+2018-04-19 16:19:30,827 - kazoo.client - WARNING - Transition to CONNECTING
+2018-04-19 16:19:30,828 - kazoo.client - INFO - Zookeeper connection lost
+2018-04-19 16:19:31,258 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:32,268 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:33,098 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:34,106 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:35,255 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:36,266 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:37,585 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:38,586 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:40,605 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:41,622 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:45,121 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:46,128 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:19:52,549 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:19:53,543 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:20:06,854 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:20:07,872 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:20:33,883 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:20:34,903 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:21:26,495 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
+2018-04-19 16:21:27,511 - kazoo.client - WARNING - Connection dropped: socket connection error: 由于目标计算机积极拒绝，无法连接。
+2018-04-19 16:22:48,353 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-19 16:22:48,367 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-19 16:22:48,374 - root - INFO - message not success : {'message': 'flush'}
+2018-04-19 16:24:05,778 - root - INFO - task 428 is running
+2018-04-19 16:24:29,813 - root - INFO - task 428 is done
+2018-04-19 16:25:00,850 - root - INFO - task 429 is running
+2018-04-19 16:25:31,906 - root - INFO - task 429 is done
+2018-04-20 13:38:19,789 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-20 13:38:19,804 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-20 13:39:22,311 - root - INFO - task 437 is running
+2018-04-20 13:40:04,745 - root - INFO - task 437 is done
+2018-04-20 13:48:39,521 - root - INFO - task 438 is running
+2018-04-20 13:51:51,834 - root - INFO - task 438 is done
+2018-04-20 14:33:55,296 - root - INFO - task 439 is running
+2018-04-20 14:34:27,774 - root - INFO - task 439 is done
+2018-04-20 14:36:29,901 - root - INFO - task 440 is running
+2018-04-20 14:40:04,476 - root - INFO - task 440 is done
+2018-04-23 17:22:54,973 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-23 17:22:54,984 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-23 17:22:54,995 - root - INFO - task 440 is done
+2018-04-23 17:24:33,496 - root - INFO - task 442 is running
+2018-04-23 17:24:42,030 - root - INFO - task 442 is done
+2018-04-23 17:25:59,116 - root - INFO - task 443 is running
+2018-04-23 17:26:11,620 - root - INFO - task 443 is done
+2018-04-23 17:59:50,602 - root - INFO - task 444 is running
+2018-04-23 17:59:53,099 - root - INFO - task 444 is done
+2018-04-23 18:07:40,555 - root - INFO - task 445 is running
+2018-04-23 18:08:50,631 - root - INFO - task 446 is running
+2018-04-23 18:09:09,094 - root - INFO - task 446 is done
+2018-04-23 18:10:17,165 - root - INFO - task 447 is running
+2018-04-23 18:10:34,640 - root - INFO - task 447 is done
+2018-04-24 15:06:28,069 - kazoo.client - WARNING - Connection dropped: outstanding heartbeat ping not received
+2018-04-24 15:06:28,069 - kazoo.client - WARNING - Transition to CONNECTING
+2018-04-24 15:06:28,069 - kazoo.client - INFO - Zookeeper connection lost
+2018-04-24 15:06:28,927 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:06:38,942 - kazoo.client - WARNING - Connection dropped: socket connection error: None
+2018-04-24 15:06:39,660 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:06:49,675 - kazoo.client - WARNING - Connection dropped: socket connection error: None
+2018-04-24 15:06:50,174 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:07:00,190 - kazoo.client - WARNING - Connection dropped: socket connection error: None
+2018-04-24 15:07:01,859 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:07:11,874 - kazoo.client - WARNING - Connection dropped: socket connection error: None
+2018-04-24 15:07:13,996 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:07:23,012 - kazoo.client - WARNING - Session has expired
+2018-04-24 15:07:23,012 - kazoo.client - INFO - Zookeeper session lost, state: EXPIRED_SESSION
+2018-04-24 15:07:23,730 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
+2018-04-24 15:07:23,730 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
+2018-04-24 17:05:55,437 - kazoo.recipe.watchers - ERROR - (2006, "MySQL server has gone away (ConnectionAbortedError(10053, '您的主机中的软件中止了一个已建立的连接。', None, 10053, None))")
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1004, in _write_bytes
+    self._sock.sendall(data)
+ConnectionAbortedError: [WinError 10053] 您的主机中的软件中止了一个已建立的连接。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 164, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 834, in query
+    self._execute_command(COMMAND.COM_QUERY, sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1054, in _execute_command
+    self._write_bytes(packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1006, in _write_bytes
+    raise err.OperationalError(2006, "MySQL server has gone away (%r)" % (e,))
+pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, '您的主机中的软件中止了一个已建立的连接。', None, 10053, None))")
+2018-04-24 17:05:55,468 - kazoo.handlers.threading - ERROR - Exception in worker queue thread
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1004, in _write_bytes
+    self._sock.sendall(data)
+ConnectionAbortedError: [WinError 10053] 您的主机中的软件中止了一个已建立的连接。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Software\Python\lib\site-packages\kazoo\handlers\threading.py", line 99, in _thread_worker
+    func()
+  File "D:\Software\Python\lib\site-packages\kazoo\handlers\threading.py", line 196, in <lambda>
+    self.callback_queue.put(lambda: callback.func(*callback.args))
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 341, in _watcher
+    self._get_children(event)
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 36, in wrapper
+    return func(*args, **kwargs)
+  File "D:\Software\Python\lib\site-packages\kazoo\recipe\watchers.py", line 333, in _get_children
+    result = self._func(children)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 164, in node_watch
+    imysql.updateNodeStatus(chindren)
+  File "D:/WorkFile/PY/test1/sol_task/allocatedTask/work-v3/solServer.py", line 86, in updateNodeStatus
+    cur.execute(allIp_sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 166, in execute
+    result = self._query(query)
+  File "D:\Software\Python\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 834, in query
+    self._execute_command(COMMAND.COM_QUERY, sql)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1054, in _execute_command
+    self._write_bytes(packet)
+  File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1006, in _write_bytes
+    raise err.OperationalError(2006, "MySQL server has gone away (%r)" % (e,))
+pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, '您的主机中的软件中止了一个已建立的连接。', None, 10053, None))")

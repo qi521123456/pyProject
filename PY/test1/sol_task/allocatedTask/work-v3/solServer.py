@@ -6,7 +6,7 @@ from kazoo.client import KazooClient
 
 class Env:
     PATH = os.path.split(os.path.realpath(__file__))[0]
-    ZookeeperHost = '192.168.205.27:2181'
+    ZookeeperHost = '192.168.120.30:2181'
     result_topic = '/taskmgt/result'
     node_topic = '/node/status'
     log = PATH+'/solServer.log'
@@ -95,20 +95,30 @@ class Imysql:
                 self.conn.commit()
     def __del__(self):
         self.conn.close()
+class WatchThread(threading.Thread):
+    def __init__(self):
+        self.thread_flag = True
+    def stop(self):
+        #super(WatchThread,self)._stop()
+        self.thread_flag = False
+        self.join()
+
 
 class Monitor:
 
     def resultWatcher(self):
         thread_node = threading.Thread(target=self.nodeWatcher)
+
         thread_node.start()
         try:
-            imysql = Imysql()
+
             @zk_client.DataWatch(Env.result_topic)
             def watch_task(data, stat):
                 try:
                     result = eval(data.decode())
-                    print(result)
+
                     if (type(result) is dict) and result['message']=='success':
+                        print(result)
                         names = result['result_name'].split('-')
                         status = result.get('task_status')
                         detailIndex = 1
@@ -120,13 +130,16 @@ class Monitor:
                             taskId = names[0]
                             nodeIp = names[1].split('@')[1]
                         else:
+                            print(len(names))
                             return
                         if status == 'running':
+                            imysql = Imysql()
                             imysql.updateDetailStatus(taskId,nodeIp,detailIndex,1)
                             if imysql.selectTaskStstus(taskId)==0:
                                 imysql.updateTaskById(taskId,1)
                                 logger.info('task %s is running'%taskId)
                         elif status == 'done':
+                            imysql = Imysql()
                             imysql.updateDetailStatus(taskId,nodeIp,detailIndex,2,result['result_name'])
                             if imysql.isTaskDone(taskId):
                                 imysql.updateTaskById(taskId,2)

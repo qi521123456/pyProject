@@ -153,12 +153,12 @@ def main(src,dst):
 if __name__ == '__main__':
     # splitByLines("E:/camera2.txt","E:/camera/2/",1000)
     # l = ["httpjson_1013","httpjson_1017","httpjson_1025","httpjson_1010"]
-    path = "I:/中间人扫描任务/A18"
+    path = "I:/中间人扫描任务/A19"
     for j in os.listdir(path):
         j1 = os.path.join(path,j)
         if os.path.isdir(j1):
             #for i in range(1,4):
                 src = path+"/"+j+"/root/data/"
-                dst = 'E:/afterprocess/18-3-5/'+j
+                dst = 'E:/afterprocess/18-4-28/A19/'+j
                 thread = threading.Thread(target=main,args=(src,dst,))
                 thread.start()

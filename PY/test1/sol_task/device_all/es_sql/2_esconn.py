@@ -1,5 +1,5 @@
 import json
-from elasticsearch5 import Elasticsearch
+from elasticsearch import Elasticsearch
 import datetime
 
 

@@ -42,7 +42,7 @@ class Env:
     IP,Docker0_MAC = Utils.localAddr()
     DockerNum = 5   # 默认最多5个docker同时运行，启动项目时可更改
     DOCKER = 'scan:v2'
-    ZookeeperHost = '192.168.205.27'
+    ZookeeperHost = '192.168.120.30'
     task_topic = '/taskmgt/task'
     result_topic = '/taskmgt/result'
     node_topic = '/node/status'
@@ -285,9 +285,13 @@ class Monitor:
             time.sleep(5)
             node_status = NodeStatus()
             zk_client.set(Env.node_topic,str(node_status).encode())
+    #def conn_listener(self,stat):
+
+
     def monitor(self):
         thread_consumer = threading.Thread(target=Consumer(self.taskmgt).consume)
         thread_docker = threading.Thread(target=self.docker_moniter)
+
         thread_node = threading.Thread(target=self.node_status)
         thread_consumer.start()
         thread_docker.start()
