@@ -8,6 +8,7 @@ from OverSampling import myOverSampling
 from imblearn.over_sampling import RandomOverSampler,SMOTE,ADASYN
 from imblearn.combine import SMOTEENN,SMOTETomek
 
+
 def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverSampler):
     kf = KFold(n_splits=K)
     k_num = K
@@ -67,11 +68,11 @@ def kfCV(X,y,K=5,clf = SVC(C=4, kernel='rbf', gamma=2),over_sampling=RandomOverS
         # print(y_train)
         # print(np.shape(y_train),np.sum(np.array(y_train)=='N'),np.sum(np.array(y_train)=='Y'))
         clf.fit(X_train,y_train)
+
         pred = clf.predict(scaler.fit_transform(X_test))
 
         # y_test = le.fit_transform(y_test)
         # pred = le.fit_transform(pred)
-
         roc_auc += metrics.roc_auc_score(le.fit_transform(y_test),le.fit_transform(pred),average="macro")
         # precision += metrics.precision_score(y_test,pred,average="micro")
         # recall += metrics.recall_score(y_test,pred,average='micro')
@@ -96,12 +97,17 @@ if __name__ == '__main__':
     from sklearn.naive_bayes import BernoulliNB
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.ensemble import RandomForestClassifier
+
+    from openpyxl import Workbook
     data = AllData()
-    for clf in [MultinomialNB(),BernoulliNB()]:
+
+
+    for clf in [GaussianNB(),BernoulliNB(binarize=1.0),BernoulliNB()]:
         print(clf.__class__)
+
         for ovs in [RandomOverSampler, SMOTE, ADASYN, myOverSampling, SMOTETomek, SMOTEENN]:
-            # if ovs in [RandomOverSampler,SMOTE]:
-            #     continue
+            if ovs in [RandomOverSampler,SMOTE,SMOTETomek, SMOTEENN]:
+                continue
             print(ovs.__name__)
 
             for d in data:

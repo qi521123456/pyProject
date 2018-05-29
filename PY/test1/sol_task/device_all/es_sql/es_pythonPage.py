@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+import elasticsearch
 from bs4 import BeautifulSoup
 import xlwt
 from openpyxl import Workbook
@@ -63,6 +64,7 @@ def write2file(file,data):
 
 def write2xls():
     wb = Workbook()
+    wb.create_sheet()
     sheet = wb.active
     sheet.title = 'elec'
     with open(file,'r',encoding='utf8') as fr:

@@ -1,7 +1,5 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-from imblearn.over_sampling import RandomOverSampler,SMOTE,ADASYN
-from imblearn.combine import SMOTEENN,SMOTETomek
 
 class myOverSampling:
     def __init__(self,radio='minority'):
