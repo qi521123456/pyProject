@@ -1,20 +1,16 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
+from sklearn import preprocessing
 
 class myOverSampling:
     def __init__(self,radio='minority'):
         self.radio = radio
     def _statDiscre(self,X_train,y_train):
-        from sklearn import preprocessing
-
-
         X = X_train
         y = np.array(y_train)
-
         scaler = preprocessing.MinMaxScaler()
         X = scaler.fit_transform(X)
         posi_Y_sum = np.sum(np.array(y)=='Y')
-        # neg_Y_sum = np.sum(y=='N')
         pos_X = []
         org_X = []
         # neg_X = []

@@ -1,7 +1,6 @@
 from scipy.io import arff
 import os
-PATH = "/home/mannix/Desktop/NASADefectDataset/CleanedData/MDP/D'/"
-
+PATH = "../NASADefectDataset/CleanedData/MDP/D'/"
 def _getData(file):
     X = []
     y = []
@@ -25,6 +24,4 @@ def AllData():
     return data
 
 if __name__ == '__main__':
-
-    print("----",end='')
-    print("++++++++")
+    print("")
