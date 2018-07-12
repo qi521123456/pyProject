@@ -1,6 +1,6 @@
 from scipy.io import arff
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,KFold
 from sklearn.preprocessing import Normalizer
 from sklearn.ensemble import IsolationForest,RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
@@ -82,12 +82,35 @@ def _choose_first_feature(feature_matrix, category_list):
           prob = float(len(sub_cate_list)) / data_num
           new_shannon_ent += prob * __calc_shannon_ent(sub_cate_list)
       info_gain = base_shannon_ent - new_shannon_ent # 信息增益
-      print('初始信息熵为：', base_shannon_ent, '按照特征%i分类后的信息熵为：' % f, new_shannon_ent, '信息增益为：', info_gain)
+      # print('初始信息熵为：', base_shannon_ent, '按照特征%i分类后的信息熵为：' % f, new_shannon_ent, '信息增益为：', info_gain)
       if info_gain > best_info_gain:
           best_info_gain = info_gain
           best_feature_index = f
   return best_feature_index
-
+def _choseFirstFeatureGini(X,Y):
+    X = np.array(X, dtype='float64')
+    Y = np.array(Y)
+    numFeatures = len(X[0])
+    numSimples = len(X)
+    bestGini = 999999.0
+    bestFeature = -1
+    for i in range(numFeatures):
+        featList = X[:,i]
+        uniqueVals = np.unique(featList)
+        gini = 0.0
+        for value in uniqueVals:
+            indics = np.where(featList==value)
+            subY = Y[indics]
+            prob = len(subY)/float(numSimples)
+            subProb = len(np.where(subY=='Y'))/float(len(subY))
+            # gini += prob * (1.0 - pow(subProb, 2) - pow(1 - subProb, 2))
+            gini += prob*2*subProb*(1-subProb)
+        gini*=len(uniqueVals)
+        print(i,gini)
+        if (gini < bestGini):
+            bestGini = gini
+            bestFeature = i
+    return bestFeature
 def splitX(X,indics):
     chose_ind = X[:,indics]
     return chose_ind
@@ -99,63 +122,80 @@ def splitX(X,indics):
 def attrsSelect(X,y,algorithm,m,n):
     X = np.array(X, dtype='float64')
     fea_num = len(X[0])
-    print(fea_num)
+    print("特征数：",fea_num)
     # trainX, testX, trainY, testY = train_test_split(X, y, test_size=1./n)
-    chose_features = [19]
-    scaler = Normalizer()
-
-    tmpX = splitX(X,chose_features)
-    base_aux = bulidClassifier(tmpX,y,algorithm)
-    best_aux = base_aux
-
-    while len(chose_features)<fea_num:
-        tmp_chose_features = chose_features.copy()
-        print(tmp_chose_features)
-        tmp_auxs = []
-        tmp_indics = []
-        for i in range(fea_num):
-            if i in chose_features:
-                continue
-            tmp_chose_features.append(i)
-            tmpX = splitX(X, tmp_chose_features)
-            ttmmpp_aux = bulidClassifier(tmpX,y,algorithm)
-            tmp_chose_features.remove(i)
-            print(ttmmpp_aux)
-            if ttmmpp_aux-best_aux>0.:# ---TODO
-                tmp_auxs.append(ttmmpp_aux)
-                tmp_indics.append(i)
-        if len(tmp_auxs)==0:
-            break
-        max_auc = max(tmp_auxs)
-        print(max_auc,end='\t')
-        max_i = tmp_auxs.index(max_auc)
-        real_i = tmp_indics[max_i]
-        print(real_i)
-        chose_features.append(real_i)
-        print(chose_features)
-        best_aux = max_auc
-
-
-
+    for chose_features in [[19],[16]]:
+        # chose_features = [19]#_choose_first_feature(X,y)
+        scaler = Normalizer()
+        tmpX = splitX(X,chose_features)
+        base_aux = bulidClassifier(tmpX,y,algorithm,n)
+        best_aux = base_aux
+        for m_i in range(m):
+            print("----------------------%s---------------------------"%m_i)
+            while len(chose_features)<fea_num:
+                tmp_chose_features = chose_features.copy()
+                print("当前特征：",tmp_chose_features)
+                tmp_auxs = []
+                tmp_indics = []
+                for i in range(fea_num):
+                    if i in chose_features:
+                        continue
+                    tmp_chose_features.append(i)
+                    tmpX = splitX(X, tmp_chose_features)
+                    ttmmpp_aux = bulidClassifier(tmpX,y,algorithm,n)
+                    tmp_chose_features.remove(i)
+                    # print(ttmmpp_aux)
+                    if ttmmpp_aux-best_aux>0.:# ---TODO
+                        tmp_auxs.append(ttmmpp_aux)
+                        tmp_indics.append(i)
+                if len(tmp_auxs)==0:
+                    break
+                max_auc = max(tmp_auxs)
+                print(max_auc,end='\t')
+                max_i = tmp_auxs.index(max_auc)
+                real_i = tmp_indics[max_i]
+                print(real_i)
+                chose_features.append(real_i)
+                print(chose_features)
+                best_aux = max_auc
 
 
 
-def bulidClassifier(X,y,algorithm):
+
+
+
+
+def bulidClassifier(X,y,algorithm,n):
+    '''
+    :param X:
+    :param y:
+    :param algorithm:
+    :param n: n折交叉
+    :return: 取n折后平均值
+    '''
     # iforest = IsolationForest()
     X = np.array(X,dtype='float64')
+    y = np.array(y)
     scaler = Normalizer()
-    trainX,testX,trainY,testY = train_test_split(X,y,test_size=0.2)
-    trainX = scaler.fit_transform(trainX)
-    testX = scaler.fit_transform(testX)
-
-    algorithm.fit(trainX,trainY)
-
-    pred = algorithm.predict_proba(testX)
-    # print(pred,testY)
-    fpr, tpr, thresholds = roc_curve(testY, pred[:,1], pos_label='Y')
-    roc_auc = auc(fpr,tpr)
-    # print(roc_auc)
-    return roc_auc
+    # trainX,testX,trainY,testY = train_test_split(X,y,test_size=0.2)
+    cv = KFold(n)
+    roc_auc_s = []
+    for i, (train, test) in enumerate(cv.split(X, y)):
+        trainX = X[train]
+        testX = X[test]
+        trainY = y[train]
+        testY = y[test]
+        if len(np.unique(testY))==1:
+            continue
+        trainX = scaler.fit_transform(trainX)
+        testX = scaler.fit_transform(testX)
+        algorithm.fit(trainX,trainY)
+        pred = algorithm.predict_proba(testX)
+        fpr, tpr, thresholds = roc_curve(testY, pred[:,1], pos_label='Y')
+        roc_auc = auc(fpr,tpr)
+        roc_auc_s.append(roc_auc)
+    # print(roc_auc_s)
+    return np.mean(np.array(roc_auc_s))
 def bulidIF(X,y):
     algorithm = IsolationForest()
     X = np.array(X,dtype='float64')
@@ -172,6 +212,14 @@ def bulidIF(X,y):
     roc_auc = auc(fpr,tpr)
     print(roc_auc)
     return roc_auc
+def attrsAnalys(X):
+    X = np.array(X)
+    num = len(X[0])
+    print("样本数目：",len(X))
+    print("特征数目：",num)
+    for i in range(num):
+        i_feature = X[:,i]
+        print("%s 号特征，取值个数  %s"%(i,len(np.unique(i_feature))))
 if __name__ == '__main__':
     PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/CM1.arff'
     X,Y = processData(PATH)
@@ -188,4 +236,9 @@ if __name__ == '__main__':
     # print(X[0],X2[0])
     # print(_choose_first_feature(np.array(X),Y))
     ######################################################################
-    attrsSelect(X,Y,RandomForestClassifier(120),1,1)
+    # attrsAnalys(X)
+    # print(_choseFirstFeatureGini(X,Y))
+
+    attrsSelect(X,Y,RandomForestClassifier(120),1,10)
+    # for i in range(5,26):
+    #     print(bulidClassifier(X,Y,RandomForestClassifier(120),20)) #10
