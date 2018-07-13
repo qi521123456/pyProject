@@ -130,11 +130,13 @@ def attrsSelect(X,y,algorithm,m,n):
         tmpX = splitX(X,chose_features)
         base_aux = bulidClassifier(tmpX,y,algorithm,n)
         best_aux = base_aux
+        print("%s\t%s"%(best_aux,chose_features))
         for m_i in range(m):
-            print("----------------------%s---------------------------"%m_i)
+            # print("----------------------%s---------------------------"%m_i)
+            print(m_i,end='\t')
             while len(chose_features)<fea_num:
                 tmp_chose_features = chose_features.copy()
-                print("当前特征：",tmp_chose_features)
+                # print("当前特征：",tmp_chose_features)
                 tmp_auxs = []
                 tmp_indics = []
                 for i in range(fea_num):
@@ -154,11 +156,11 @@ def attrsSelect(X,y,algorithm,m,n):
                 print(max_auc,end='\t')
                 max_i = tmp_auxs.index(max_auc)
                 real_i = tmp_indics[max_i]
-                print(real_i)
+                print(real_i,end='\t')
                 chose_features.append(real_i)
                 print(chose_features)
                 best_aux = max_auc
-
+        print("-------------------------------------------------------")
 
 
 
