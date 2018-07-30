@@ -24,6 +24,7 @@ def plotLine(x,y1,y2,y3):
 
 
 if __name__ == '__main__':
-    x, y1, y2, y3 = getResult('./Result/7-11.txt')
-    plotLine(x, y1, y2, y3)
+    # x, y1, y2, y3 = getResult('./Result/7-11.txt')
+    # plotLine(x, y1, y2, y3)
+    print([f_i for f_i in range(10)])
 

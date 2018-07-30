@@ -1,3 +1,5 @@
+import argparse,sys
+
 import requests
 import json,datetime
 import os,time
@@ -24,7 +26,22 @@ def getdata(ips,port):
             qh = dict(q.headers)
             for k in qh:
                 if k is not None and qh[k] is not None:
-                    q_header[k.strip('').strip('.').replace('.','-')] = qh[k].strip('').strip('.')
+                    if k=="Last-Modified" or k=="Date":
+                        st = qh[k]
+                        GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+                        try:
+                            d = datetime.datetime.strptime(st, GMT_FORMAT)
+                            if not isinstance(d,datetime.datetime):
+                                continue
+                        except:
+                            continue
+                    try:
+                        if len(k)<3 or type(int(k))==int:
+                            continue
+                    except:
+                        pass
+                    q_header[k.strip('').strip('.').replace('.','-').lower()] = qh[k].strip('').strip('.')
+                    # q_header[k.strip('').strip('.').replace('.','-')] = qh[k].strip('').strip('.')
             data['server'] =q_header
             soup = BeautifulSoup(q.content,from_encoding='utf8')
             head = {}
@@ -82,8 +99,37 @@ def main(ipfile,port,writepath,n=100,perfileN=10000):
             data2json(getdata(write_lines, port), writefile)
 
 
+def main(parameters):
+    writepath = parameters.get("writepath")
+    ipfile = parameters.get("ipfile")
+    port = parameters.get("port")
+    n = 100
+    perfileN = 100000
+    if not os.path.exists(writepath):
+        os.makedirs(writepath)
+    with open(ipfile,'r') as fr:
+        lines = fr.readlines()
+        write_lines = []
+        x = 1
+        writefile = writepath+"hello.json"
+        for i,ip in enumerate(lines):
+            write_lines.append(ip.strip())
+            if i%perfileN==0:
+                writefile = writepath + str(x) + ".json"
+                x += 1
+            if i%n==0 and i!=0:
+                data2json(getdata(write_lines,port),writefile)
+                write_lines = []
+        if len(write_lines)!=0:
+            data2json(getdata(write_lines, port), writefile)
+
+
+
 if __name__ == '__main__':
-    #main("E:/1.txt",80,"E:/s1/",5,10)
-    # print(getdata(['211.147.11.26'],80))
-    s = '{"key":"value"}'
-    print(demjson.encode(s))
+    parser = argparse.ArgumentParser(description="scannode parameter description")
+    parser.add_argument("--writepath")
+    parser.add_argument("--ipfile")
+    parser.add_argument("--port")
+    args = parser.parse_args(sys.argv[1:])
+    parameters = vars(args)
+    main(parameters)

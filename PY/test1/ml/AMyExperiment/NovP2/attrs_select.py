@@ -1,3 +1,4 @@
+import time,os
 from scipy.io import arff
 import numpy as np
 from sklearn.model_selection import train_test_split,KFold
@@ -106,7 +107,7 @@ def _choseFirstFeatureGini(X,Y):
             # gini += prob * (1.0 - pow(subProb, 2) - pow(1 - subProb, 2))
             gini += prob*2*subProb*(1-subProb)
         gini*=len(uniqueVals)
-        print(i,gini)
+        # print(i,gini)
         if (gini < bestGini):
             bestGini = gini
             bestFeature = i
@@ -123,17 +124,19 @@ def attrsSelect(X,y,algorithm,m,n):
     X = np.array(X, dtype='float64')
     fea_num = len(X[0])
     print("特征数：",fea_num)
+    res = []
     # trainX, testX, trainY, testY = train_test_split(X, y, test_size=1./n)
-    for chose_features in [[19],[16]]:
-        # chose_features = [19]#_choose_first_feature(X,y)
-        scaler = Normalizer()
+    for loop_m in range(m):
+        begin_time = time.time()
+        chose_features = []
+        chose_features.append(_choseFirstFeatureGini(X,y))
+        # scaler = Normalizer()
         tmpX = splitX(X,chose_features)
         base_aux = bulidClassifier(tmpX,y,algorithm,n)
         best_aux = base_aux
-        print("%s\t%s"%(best_aux,chose_features))
-        for m_i in range(m):
-            # print("----------------------%s---------------------------"%m_i)
-            print(m_i,end='\t')
+        # print("%s\t%s"%(best_aux,chose_features))
+        for m_i in range(m): # break m 次 ，确保没有特征增加
+            #print(m_i,end='\t')
             while len(chose_features)<fea_num:
                 tmp_chose_features = chose_features.copy()
                 # print("当前特征：",tmp_chose_features)
@@ -153,14 +156,55 @@ def attrsSelect(X,y,algorithm,m,n):
                 if len(tmp_auxs)==0:
                     break
                 max_auc = max(tmp_auxs)
-                print(max_auc,end='\t')
                 max_i = tmp_auxs.index(max_auc)
                 real_i = tmp_indics[max_i]
-                print(real_i,end='\t')
                 chose_features.append(real_i)
-                print(chose_features)
+                #print("%s\t%s"%(max_auc,chose_features))
                 best_aux = max_auc
-        print("-------------------------------------------------------")
+        end_time = time.time()
+        print("loop:%s\tauc:%s\tfeatures:%s\tuse_time:%s" % (loop_m,best_aux, chose_features,end_time-begin_time))
+        res.append("%s\t%s\t%s\t%s\n"%(loop_m,best_aux, chose_features,end_time-begin_time))
+    return res
+
+def bf_attrs_select(X,y,algorithm,m,n):
+    X = np.array(X, dtype='float64')
+    fea_num = len(X[0])
+    print("特征数：", fea_num)
+    # trainX, testX, trainY, testY = train_test_split(X, y, test_size=1./n)
+    for loop_m in range(m):
+        begin_time = time.time()
+        chose_features = [f_i for f_i in range(fea_num)]
+        tmpX = splitX(X, chose_features)
+        base_aux = bulidClassifier(tmpX, y, algorithm, n)
+        best_aux = base_aux
+        print("all features :%s\t%s"%(best_aux,chose_features))
+        for m_i in range(m):  # break m 次 ，确保没有特征减少
+            # print(m_i,end='\t')
+            while len(chose_features) > 0 :
+                tmp_chose_features = chose_features[:]
+                # print("当前特征：",tmp_chose_features)
+                tmp_auxs = []
+                tmp_indics = []
+                for i in chose_features:
+                    tmp_chose_features.remove(i)
+                    tmpX = splitX(X, tmp_chose_features)
+                    ttmmpp_aux = bulidClassifier(tmpX, y, algorithm, n)
+                    tmp_chose_features.append(i)
+                    # print(ttmmpp_aux)
+                    if ttmmpp_aux - best_aux > 0.:  # ---TODO
+                        tmp_auxs.append(ttmmpp_aux)
+                        tmp_indics.append(i)
+                if len(tmp_auxs) == 0:
+                    # print("break")
+                    break
+                max_auc = max(tmp_auxs)
+                max_i = tmp_auxs.index(max_auc)
+                real_i = tmp_indics[max_i]
+                chose_features.remove(real_i)
+                # print("%s\t%s"%(max_auc,chose_features))
+                best_aux = max_auc
+        end_time = time.time()
+        print("loop:%s\tauc:%s\tfeatures:%s\tuse_time:%s" % (loop_m, best_aux, chose_features, end_time - begin_time))
 
 
 
@@ -187,7 +231,7 @@ def bulidClassifier(X,y,algorithm,n):
         testX = X[test]
         trainY = y[train]
         testY = y[test]
-        if len(np.unique(testY))==1:
+        if len(np.unique(testY))==1 or len(np.unique(trainY))==1:
             continue
         trainX = scaler.fit_transform(trainX)
         testX = scaler.fit_transform(testX)
@@ -223,8 +267,8 @@ def attrsAnalys(X):
         i_feature = X[:,i]
         print("%s 号特征，取值个数  %s"%(i,len(np.unique(i_feature))))
 if __name__ == '__main__':
-    PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/CM1.arff'
-    X,Y = processData(PATH)
+    # PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/CM1.arff'
+    # X,Y = processData(PATH)
     ######################################################################
     # with open('./Result/7-11.txt','w') as fw:
     #     for i in range(9,150):
@@ -241,6 +285,16 @@ if __name__ == '__main__':
     # attrsAnalys(X)
     # print(_choseFirstFeatureGini(X,Y))
 
-    attrsSelect(X,Y,RandomForestClassifier(120),1,10)
+    # attrsSelect(X,Y,RandomForestClassifier(120),10,10)
+    # bf_attrs_select(X,Y,RandomForestClassifier(120),10,10)
     # for i in range(5,26):
     #     print(bulidClassifier(X,Y,RandomForestClassifier(120),20)) #10
+    #########################################################################
+    path = '../NASADefectDataset/CleanedData/MDP/D\'\'/'
+    with open('./Result/7-17.txt','w') as fw:
+        for file in os.listdir(path):
+            print(file)
+            X, Y = processData(path+file)
+            res = attrsSelect(X,Y,RandomForestClassifier(120),10,10)
+            fw.write(str(file)+'\n')
+            fw.writelines(res)
