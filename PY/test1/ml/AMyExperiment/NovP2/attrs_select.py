@@ -100,9 +100,11 @@ def _choseFirstFeatureGini(X,Y):
         gini = 0.0
         for value in uniqueVals:
             indics = np.where(featList==value)
+            # print(indics)
             subY = Y[indics]
             prob = len(subY)/float(numSimples)
-            subProb = len(np.where(subY=='Y'))/float(len(subY))
+            # print(np.where(subY=='Y')[0].shape[0])
+            subProb = np.where(subY=='Y')[0].shape[0]/float(len(subY))
             # gini += prob * (1.0 - pow(subProb, 2) - pow(1 - subProb, 2))
             gini += prob*2*subProb*(1-subProb)
         gini*=len(uniqueVals)
@@ -162,11 +164,6 @@ def attrsSelect(X,y,algorithm,m,n):
                 best_aux = max_auc
         print("-------------------------------------------------------")
 
-
-
-
-
-
 def bulidClassifier(X,y,algorithm,n):
     '''
     :param X:
@@ -222,9 +219,19 @@ def attrsAnalys(X):
     for i in range(num):
         i_feature = X[:,i]
         print("%s 号特征，取值个数  %s"%(i,len(np.unique(i_feature))))
+
+def dataSetAnalys(X,Y):
+    X = np.array(X)
+    Y = np.array(Y)
+    num = len(X[0])
+    y_n = np.where(Y=='N')[0].shape[0]
+    # print(y_n[0].shape)
+    print("%s\t%s\t%s\t%s"%(len(X),num,y_n,len(Y)-y_n))
 if __name__ == '__main__':
-    PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/CM1.arff'
-    X,Y = processData(PATH)
+    import os
+    PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/'
+    for file in os.listdir(PATH):
+        X,Y = processData(PATH+file)
     ######################################################################
     # with open('./Result/7-11.txt','w') as fw:
     #     for i in range(9,150):
@@ -239,8 +246,10 @@ if __name__ == '__main__':
     # print(_choose_first_feature(np.array(X),Y))
     ######################################################################
     # attrsAnalys(X)
+        print(file,end='\t')
+        dataSetAnalys(X,Y)
     # print(_choseFirstFeatureGini(X,Y))
 
-    attrsSelect(X,Y,RandomForestClassifier(120),1,10)
+    # attrsSelect(X,Y,RandomForestClassifier(120),1,10)
     # for i in range(5,26):
     #     print(bulidClassifier(X,Y,RandomForestClassifier(120),20)) #10
