@@ -1,7 +1,7 @@
 import requests
 import base64
-KEY = "5d18dd2308793e56b2ff0bd22dd59a36"
-email = "651701497@qq.com"
+KEY = "#"
+email = "#"
 q = "port=80"
 bq = base64.b64encode(q.encode()).decode()
 
