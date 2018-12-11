@@ -1,6 +1,8 @@
 '''
 点3，无标记样本分类，无人工干预标记
 '''
+from time import time
+
 from sklearn import cluster
 import numpy as np
 from scipy.io import arff
@@ -50,7 +52,16 @@ def nov_cluster(X,Y):
         centroids = clf.labels_
         print(centroids, type(centroids))# 显示中心点
         print(clf.inertia_)# 显示聚类效果
-    # pred = cluster.DBSCAN(eps=0.1,min_samples=10).fit_predict(X)
+        from sklearn.cluster import AgglomerativeClustering
+
+        for linkage in ('ward', 'average', 'complete'):
+            clustering = AgglomerativeClustering(linkage=linkage, n_clusters=10)
+            t0 = time()
+            # clustering.fit(X_red)
+            # print("%s : %.2fs" % (linkage, time() - t0))
+            # plot_clustering(X_red, X, clustering.labels_, "%s linkage" % linkage)
+
+        # pred = cluster.DBSCAN(eps=0.1,min_samples=10).fit_predict(X)
     # bind_width = cluster.estimate_bandwidth(X)
     # clf = cluster.MeanShift(bandwidth=bind_width,bin_seeding=True,cluster_all=True).fit_predict(X)
     # centroids = clf
@@ -58,15 +69,17 @@ def nov_cluster(X,Y):
     # print(Y)
     # print(pred)
     # print(roc_auc_score(Y,pred))
+# def nov_pca(X):
+
 if __name__ == '__main__':
     import os
     import matplotlib.pyplot as plt
     PATH = '../NASADefectDataset/CleanedData/MDP/D\'\'/'
     for file in os.listdir(PATH):
-        if not file.startswith('PC4'):
-            continue
+        # if not file.startswith('PC4'):
+        #     continue
         X, Y = processData(PATH + file)
-        print("name:"+file+"\tfeatures:"+np.shape(X).__str__())
+        # print("name:"+file+"\tfeatures:"+np.shape(X).__str__())
         b,f = clustering(X)
         ins_index = select(b,f)
         pred = np.zeros(np.shape(Y))
@@ -80,6 +93,6 @@ if __name__ == '__main__':
         # plt.plot(mean_fpr,mean_tpr)
         # plt.show()
 
-        print(roc_auc_score(Y,pred))
+        print(file+"\t",roc_auc_score(Y,pred))
 
-        nov_cluster(X,Y)
+        # nov_cluster(X,Y)
