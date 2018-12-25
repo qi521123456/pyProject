@@ -298,29 +298,29 @@ pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
 2018-04-19 10:30:48,880 - root - INFO - task 426 is done
 2018-04-19 11:13:40,449 - root - INFO - task 427 is running
 2018-04-19 11:14:04,541 - root - INFO - task 427 is done
-2018-04-19 16:19:30,811 - kazoo.client - WARNING - Connection dropped: socket connection error: Ô¶³ÌÖ÷»úÇ¿ÆÈ¹Ø±ÕÁËÒ»¸öÏÖÓÐµÄÁ¬½Ó¡£
+2018-04-19 16:19:30,811 - kazoo.client - WARNING - Connection dropped: socket connection error: Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½È¹Ø±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:30,827 - kazoo.client - WARNING - Transition to CONNECTING
 2018-04-19 16:19:30,828 - kazoo.client - INFO - Zookeeper connection lost
 2018-04-19 16:19:31,258 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:32,268 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:32,268 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:33,098 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:34,106 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:34,106 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:35,255 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:36,266 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:36,266 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:37,585 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:38,586 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:38,586 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:40,605 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:41,622 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:41,622 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:45,121 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:46,128 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:46,128 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:19:52,549 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:19:53,543 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:19:53,543 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:20:06,854 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:20:07,872 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:20:07,872 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:20:33,883 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:20:34,903 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:20:34,903 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:21:26,495 - kazoo.client - INFO - Connecting to 192.168.205.27:2181
-2018-04-19 16:21:27,511 - kazoo.client - WARNING - Connection dropped: socket connection error: ÓÉÓÚÄ¿±ê¼ÆËã»ú»ý¼«¾Ü¾ø£¬ÎÞ·¨Á¬½Ó¡£
+2018-04-19 16:21:27,511 - kazoo.client - WARNING - Connection dropped: socket connection error: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 2018-04-19 16:22:48,353 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
 2018-04-19 16:22:48,367 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
 2018-04-19 16:22:48,374 - root - INFO - message not success : {'message': 'flush'}
@@ -368,11 +368,11 @@ pymysql.err.InternalError: Packet sequence number wrong - got 102 expected 2
 2018-04-24 15:07:23,012 - kazoo.client - INFO - Zookeeper session lost, state: EXPIRED_SESSION
 2018-04-24 15:07:23,730 - kazoo.client - INFO - Connecting to 192.168.120.30:2181
 2018-04-24 15:07:23,730 - kazoo.client - INFO - Zookeeper connection established, state: CONNECTED
-2018-04-24 17:05:55,437 - kazoo.recipe.watchers - ERROR - (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ÄúµÄÖ÷»úÖÐµÄÈí¼þÖÐÖ¹ÁËÒ»¸öÒÑ½¨Á¢µÄÁ¬½Ó¡£', None, 10053, None))")
+2018-04-24 17:05:55,437 - kazoo.recipe.watchers - ERROR - (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½', None, 10053, None))")
 Traceback (most recent call last):
   File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1004, in _write_bytes
     self._sock.sendall(data)
-ConnectionAbortedError: [WinError 10053] ÄúµÄÖ÷»úÖÐµÄÈí¼þÖÐÖ¹ÁËÒ»¸öÒÑ½¨Á¢µÄÁ¬½Ó¡£
+ConnectionAbortedError: [WinError 10053] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 
 During handling of the above exception, another exception occurred:
 
@@ -393,12 +393,12 @@ Traceback (most recent call last):
     self._write_bytes(packet)
   File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1006, in _write_bytes
     raise err.OperationalError(2006, "MySQL server has gone away (%r)" % (e,))
-pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ÄúµÄÖ÷»úÖÐµÄÈí¼þÖÐÖ¹ÁËÒ»¸öÒÑ½¨Á¢µÄÁ¬½Ó¡£', None, 10053, None))")
+pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½', None, 10053, None))")
 2018-04-24 17:05:55,468 - kazoo.handlers.threading - ERROR - Exception in worker queue thread
 Traceback (most recent call last):
   File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1004, in _write_bytes
     self._sock.sendall(data)
-ConnectionAbortedError: [WinError 10053] ÄúµÄÖ÷»úÖÐµÄÈí¼þÖÐÖ¹ÁËÒ»¸öÒÑ½¨Á¢µÄÁ¬½Ó¡£
+ConnectionAbortedError: [WinError 10053] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
 
 During handling of the above exception, another exception occurred:
 
@@ -427,4 +427,4 @@ Traceback (most recent call last):
     self._write_bytes(packet)
   File "D:\Software\Python\lib\site-packages\pymysql\connections.py", line 1006, in _write_bytes
     raise err.OperationalError(2006, "MySQL server has gone away (%r)" % (e,))
-pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ÄúµÄÖ÷»úÖÐµÄÈí¼þÖÐÖ¹ÁËÒ»¸öÒÑ½¨Á¢µÄÁ¬½Ó¡£', None, 10053, None))")
+pymysql.err.OperationalError: (2006, "MySQL server has gone away (ConnectionAbortedError(10053, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½', None, 10053, None))")
