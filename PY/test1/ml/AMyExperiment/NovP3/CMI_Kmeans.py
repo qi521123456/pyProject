@@ -54,7 +54,6 @@ if __name__ == '__main__':
     for file in os.listdir(PATH):
         X, Y = load_data(PATH+file)
         Y = np.reshape(Y, (len(Y), 1))
-
         X_t = _pca(X,np.shape(X)[1]//2)
         X_t = _init_cluster(X_t)
         lable,ins_indics,fea_indics = _label_mvs(X_t)
@@ -69,5 +68,8 @@ if __name__ == '__main__':
         clf = cluster.KMeans(n_clusters=2,n_init=20).fit(X[:,fea_indics])
         # ac = cluster.AgglomerativeClustering(n_clusters=2,linkage='complete').fit(X[:,fea_indics])
         # clf = cluster.DBSCAN(min_samples=2).fit(X[:,fea_indics])
-        print(roc_auc_score(y_true,clf.labels_))
+        auc = roc_auc_score(y_true,clf.labels_)
+        if auc<0.5:
+            auc = 1-auc
+        print(file.split('.')[0],auc)
 
